@@ -1,0 +1,414 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دار القرآن - لوحة التحكم</title>
+    
+    <!-- Cairo Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Amiri Font for Quranic Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./css/style.css">
+    
+    <!-- Hide content until auth check -->
+    <style>
+        body {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.auth-checked {
+            opacity: 1;
+        }
+    </style>
+    
+    <!-- Auth Check - Run immediately -->
+    <script>
+        // Check auth before page loads
+        (function() {
+            const session = localStorage.getItem('darquran_session');
+            
+            if (!session) {
+                window.location.href = './login.html';
+                return;
+            }
+            
+            try {
+                const sessionData = JSON.parse(session);
+                const now = new Date().getTime();
+                
+                // Check if session is still valid
+                if (!sessionData.expiry || now >= sessionData.expiry) {
+                    localStorage.removeItem('darquran_session');
+                    window.location.href = './login.html';
+                    return;
+                }
+                
+                // Show page after auth check
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.body.classList.add('auth-checked');
+                });
+            } catch (e) {
+                localStorage.removeItem('darquran_session');
+                window.location.href = './login.html';
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="./412228336_122100687200156181_4125175610950997201_n.jpg" alt="دار القرآن" class="sidebar-logo">
+                <h2 class="sidebar-title">دار القرآن</h2>
+                <p class="sidebar-subtitle">نظام إدارة المحفظين والطلبة</p>
+            </div>
+            
+            <nav>
+                <ul class="sidebar-menu">
+                    <li class="menu-item">
+                        <a href="./index.html" class="menu-link active">
+                            <i class="fas fa-home menu-icon"></i>
+                            <span>لوحة التحكم</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./pages/students.html" class="menu-link">
+                            <i class="fas fa-user-graduate menu-icon"></i>
+                            <span>الطلبة</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./pages/teachers.html" class="menu-link">
+                            <i class="fas fa-chalkboard-teacher menu-icon"></i>
+                            <span>المحفظين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./pages/sessions.html" class="menu-link">
+                            <i class="fas fa-calendar-alt menu-icon"></i>
+                            <span>الحصص</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./pages/scheduled-sessions.html" class="menu-link">
+                            <i class="fas fa-clock menu-icon"></i>
+                            <span>الجدول الأسبوعي</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./pages/makeup-sessions.html" class="menu-link">
+                            <i class="fas fa-redo menu-icon"></i>
+                            <span>الحصص التعويضية</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./pages/attendance.html" class="menu-link">
+                            <i class="fas fa-user-check menu-icon"></i>
+                            <span>الحضور والغياب</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./pages/invoices.html" class="menu-link">
+                            <i class="fas fa-file-invoice menu-icon"></i>
+                            <span>الفواتير</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./pages/payments.html" class="menu-link">
+                            <i class="fas fa-money-bill-wave menu-icon"></i>
+                            <span>المدفوعات</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./pages/treasury.html" class="menu-link">
+                            <i class="fas fa-vault menu-icon"></i>
+                            <span>الخزائن</span>
+                        </a>
+                    </li>
+                    <!-- <li class="menu-item">
+                        <a href="./pages/expenses.html" class="menu-link">
+                            <i class="fas fa-receipt menu-icon"></i>
+                            <span>المصروفات</span>
+                        </a>
+                    </li> -->
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./pages/teacher-salaries.html" class="menu-link">
+                            <i class="fas fa-wallet menu-icon"></i>
+                            <span>رواتب المحفظين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./pages/reports.html" class="menu-link">
+                            <i class="fas fa-chart-bar menu-icon"></i>
+                            <span>التقارير</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./pages/settings.html" class="menu-link">
+                            <i class="fas fa-cog menu-icon"></i>
+                            <span>الإعدادات</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Logout Button -->
+            <div style="padding: 1rem; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button onclick="logout()" class="btn" style="width: 100%; background: #dc3545; color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt" style="margin-left: 0.5rem;"></i>
+                    تسجيل الخروج
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">
+                    <i class="fas fa-home"></i>
+                    لوحة التحكم
+                </h1>
+                
+                <div class="header-verse">
+                    ﴿إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ﴾
+                </div>
+                
+                <div class="header-actions">
+                    <div class="user-info">
+                        <img src="./412228336_122100687200156181_4125175610950997201_n.jpg" alt="المستخدم" class="user-avatar">
+                        <span class="user-name">المدير</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Content -->
+            <div class="content islamic-pattern">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="stat-value" id="totalStudents">0</div>
+                        <div class="stat-label">إجمالي الطلبة</div>
+                    </div>
+                    
+                    <div class="stat-card gold">
+                        <div class="stat-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="stat-value" id="totalTeachers">0</div>
+                        <div class="stat-label">إجمالي المحفظين</div>
+                    </div>
+                    
+                    <div class="stat-card brown">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-value" id="todaySessions">0</div>
+                        <div class="stat-label">حصص اليوم</div>
+                    </div>
+                    
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <div class="stat-value" id="totalPricingPlans">4</div>
+                        <div class="stat-label">أنواع الباقات</div>
+                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.8); margin-top: 0.5rem;">
+                            1-4 حصص/أسبوع
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Statistics Row: Attendance & Revenue -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    
+                    <!-- Attendance Statistics (Pie Chart Only) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-pie"></i>
+                                إحصائيات الحصص (هذا الشهر)
+                            </h3>
+                        </div>
+                        <div style="padding: 2rem;">
+                            <!-- Chart Container -->
+                            <div style="position: relative; height: 380px;">
+                                <canvas id="attendanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Revenue Chart -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-bar"></i>
+                                الإيرادات الشهرية (آخر 6 أشهر)
+                            </h3>
+                        </div>
+                        <div style="position: relative; height: 400px; padding: 20px;">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Today's Sessions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-calendar-day"></i>
+                            حصص اليوم
+                        </h3>
+                        <a href="/pages/sessions.html" class="btn btn-primary btn-sm">
+                            عرض الكل
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="todaySessionsTable">
+                            <thead>
+                                <tr>
+                                    <th>الوقت</th>
+                                    <th>الطالب</th>
+                                    <th>المحفظ</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="todaySessionsBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner"></div>
+                                        <p>جاري تحميل البيانات...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Recent Payments -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-money-bill-wave"></i>
+                            آخر المدفوعات
+                        </h3>
+                        <a href="/pages/payments.html" class="btn btn-primary btn-sm">
+                            عرض الكل
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="recentPaymentsTable">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>الطالب</th>
+                                    <th>المبلغ</th>
+                                    <th>الطريقة</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentPaymentsBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner"></div>
+                                        <p>جاري تحميل البيانات...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Scripts -->
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Auth Check -->
+    <script src="./js/auth.js"></script>
+    
+    <!-- Supabase Config & Client -->
+    <script src="./js/supabase-config.js"></script>
+    <script src="./js/db-logger.js"></script>
+    <script src="./js/supabase-client.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Burger Menu for Mobile -->
+    <script src="./js/burger-menu.js"></script>
+    
+    <!-- Original Scripts -->
+    <script src="./js/config.js"></script>
+    <script src="./js/api.js"></script>
+    <script src="./js/dashboard.js"></script>
+    
+    <!-- Hide restricted menu items for non-admin users -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get current user session
+            const session = localStorage.getItem('darquran_session');
+            
+            if (session) {
+                try {
+                    const sessionData = JSON.parse(session);
+                    
+                    // If user is not admin, hide restricted menu items
+                    if (sessionData.role !== 'admin') {
+                        const restrictedItems = document.querySelectorAll('[data-restricted="true"]');
+                        restrictedItems.forEach(item => {
+                            item.style.display = 'none';
+                        });
+                        
+                        console.log('[Menu] Hidden restricted items for user role');
+                    }
+                    
+                    // Show access denied message if redirected from restricted page
+                    if (localStorage.getItem('access_denied') === 'true') {
+                        localStorage.removeItem('access_denied');
+                        
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'غير مصرح',
+                                text: 'ليس لديك صلاحية للوصول إلى هذه الصفحة',
+                                confirmButtonText: 'حسناً',
+                                confirmButtonColor: '#2c5f2d'
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.error('[Menu] Error parsing session:', e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+

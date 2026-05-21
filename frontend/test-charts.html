@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الرسوم البيانية</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        canvas {
+            max-width: 600px;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>اختبار الرسوم البيانية</h1>
+    
+    <div class="chart-container">
+        <h2>رسم دائري (Doughnut)</h2>
+        <canvas id="testChart1"></canvas>
+    </div>
+    
+    <div class="chart-container">
+        <h2>رسم بياني (Bar)</h2>
+        <canvas id="testChart2"></canvas>
+    </div>
+    
+    <script>
+        console.log('Chart.js loaded:', typeof Chart !== 'undefined');
+        
+        // Test Chart 1 - Doughnut
+        const ctx1 = document.getElementById('testChart1');
+        new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: ['مجدولة', 'حضر', 'غاب', 'اعتذر'],
+                datasets: [{
+                    data: [10, 25, 5, 8],
+                    backgroundColor: ['#ffc107', '#2d5f3f', '#c9302c', '#6c757d']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        
+        // Test Chart 2 - Bar
+        const ctx2 = document.getElementById('testChart2');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                datasets: [{
+                    label: 'الإيرادات',
+                    data: [1200, 1900, 3000, 5000, 2300, 3200],
+                    backgroundColor: '#2d5f3f'
+                }, {
+                    label: 'المصروفات',
+                    data: [800, 1200, 1500, 2000, 1800, 2100],
+                    backgroundColor: '#c9302c'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        console.log('Charts created successfully!');
+    </script>
+</body>
+</html>

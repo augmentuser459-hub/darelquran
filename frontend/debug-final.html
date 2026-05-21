@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>التشخيص النهائي - Supabase</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            padding: 30px; 
+            max-width: 900px; 
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+        h1 { color: #1a5f3f; }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: #27ae60; }
+        .error { color: #e74c3c; }
+        .warning { color: #f39c12; }
+        pre { 
+            background: #2d2d2d; 
+            color: #f8f8f2;
+            padding: 15px; 
+            border-radius: 5px; 
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        .step-num {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #1a5f3f;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-left: 10px;
+        }
+        #log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-success { color: #4ec9b0; }
+        .log-error { color: #f14c4c; }
+        .log-info { color: #3794ff; }
+    </style>
+</head>
+<body>
+    <h1>🔍 التشخيص النهائي لـ Supabase SDK</h1>
+    
+    <div class="card">
+        <h3><span class="step-num">1</span> حالة التحميل</h3>
+        <div id="loadStatus">⏳ جاري الفحص...</div>
+    </div>
+    
+    <div class="card">
+        <h3><span class="step-num">2</span> سجل التشخيص</h3>
+        <div id="log"></div>
+    </div>
+    
+    <div class="card">
+        <h3><span class="step-num">3</span> اختبار الاتصال</h3>
+        <div id="connectionTest">⏳ في انتظار التهيئة...</div>
+    </div>
+    
+    <div class="card">
+        <h3><span class="step-num">4</span> الحل</h3>
+        <div id="solution"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- الخطوة 1: تحميل Supabase SDK من CDN -->
+    <!-- ============================================ -->
+    <script>
+        // Custom logger
+        const logEl = document.getElementById('log');
+        function addLog(msg, type = 'info') {
+            const line = document.createElement('div');
+            line.className = 'log-' + type;
+            line.textContent = new Date().toLocaleTimeString() + ' - ' + msg;
+            logEl.appendChild(line);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+        
+        addLog('بدء التشخيص...', 'info');
+        addLog('window.supabase قبل تحميل SDK: ' + typeof window.supabase, 'info');
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        addLog('تم تحميل SDK من CDN', 'info');
+        addLog('window.supabase بعد التحميل: ' + typeof window.supabase, 'info');
+        
+        if (window.supabase) {
+            addLog('window.supabase keys: ' + Object.keys(window.supabase).join(', '), 'info');
+            
+            if (typeof window.supabase.createClient === 'function') {
+                addLog('✅ createClient موجود!', 'success');
+            } else {
+                addLog('❌ createClient غير موجود', 'error');
+            }
+        } else {
+            addLog('❌ window.supabase غير معرّف', 'error');
+        }
+    </script>
+    
+    <!-- ============================================ -->
+    <!-- الخطوة 2: تحميل Config -->
+    <!-- ============================================ -->
+    <script src="/js/supabase-config.js"></script>
+    
+    <script>
+        if (typeof SUPABASE_CONFIG !== 'undefined') {
+            addLog('✅ SUPABASE_CONFIG محمّل', 'success');
+            addLog('URL: ' + SUPABASE_CONFIG.url, 'info');
+        } else {
+            addLog('❌ SUPABASE_CONFIG غير محمّل', 'error');
+        }
+    </script>
+    
+    <!-- ============================================ -->
+    <!-- الخطوة 3: تحميل Client -->
+    <!-- ============================================ -->
+    <script src="/js/supabase-client.js"></script>
+    
+    <script>
+        // انتظر قليلاً ثم تحقق
+        setTimeout(async () => {
+            const statusEl = document.getElementById('loadStatus');
+            const testEl = document.getElementById('connectionTest');
+            const solutionEl = document.getElementById('solution');
+            
+            // فحص الحالة
+            let status = '';
+            let solution = '';
+            
+            if (window.supabase && typeof window.supabase.from === 'function') {
+                status = '<span class="success">✅ Supabase جاهز للاستخدام!</span>';
+                addLog('✅ window.supabase.from متاح', 'success');
+                
+                // اختبار الاتصال
+                testEl.textContent = '⏳ جاري اختبار الاتصال...';
+                
+                try {
+                    const { data, error } = await window.supabase
+                        .from('students')
+                        .select('id, name')
+                        .limit(3);
+                    
+                    if (error) {
+                        testEl.innerHTML = '<span class="error">❌ خطأ: ' + error.message + '</span>';
+                        addLog('❌ خطأ في Query: ' + error.message, 'error');
+                        
+                        if (error.message.includes('permission') || error.message.includes('RLS')) {
+                            solution = `
+                                <p class="warning">⚠️ المشكلة: صلاحيات RLS</p>
+                                <p>الحل: تأكد من إعداد Row Level Security في Supabase Dashboard</p>
+                            `;
+                        }
+                    } else {
+                        testEl.innerHTML = '<span class="success">✅ الاتصال يعمل!</span><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                        addLog('✅ Query نجح! عدد النتائج: ' + (data?.length || 0), 'success');
+                        solution = '<p class="success">✅ كل شيء يعمل بشكل صحيح!</p>';
+                    }
+                } catch (e) {
+                    testEl.innerHTML = '<span class="error">❌ Exception: ' + e.message + '</span>';
+                    addLog('❌ Exception: ' + e.message, 'error');
+                }
+                
+            } else {
+                status = '<span class="error">❌ Supabase غير جاهز</span>';
+                addLog('❌ window.supabase.from غير متاح', 'error');
+                
+                // تشخيص المشكلة
+                if (typeof window.supabase === 'undefined') {
+                    solution = `
+                        <p class="error">❌ المشكلة: SDK لم يتم تحميله</p>
+                        <p>الأسباب المحتملة:</p>
+                        <ul>
+                            <li>مشكلة في الاتصال بالإنترنت</li>
+                            <li>CDN محجوب</li>
+                            <li>خطأ في رابط السكربت</li>
+                        </ul>
+                        <p>الحل: افتح Network tab في DevTools وتحقق من تحميل الملف</p>
+                    `;
+                } else if (typeof window.supabase.createClient !== 'function') {
+                    solution = `
+                        <p class="error">❌ المشكلة: SDK محمّل لكن createClient غير موجود</p>
+                        <p>هذا غير طبيعي. جرب:</p>
+                        <ul>
+                            <li>مسح الكاش (Ctrl+Shift+R)</li>
+                            <li>استخدام نسخة محددة من SDK</li>
+                        </ul>
+                    `;
+                } else {
+                    solution = `
+                        <p class="warning">⚠️ المشكلة: createClient موجود لكن التهيئة فشلت</p>
+                        <p>تحقق من:</p>
+                        <ul>
+                            <li>SUPABASE_CONFIG.url صحيح</li>
+                            <li>SUPABASE_CONFIG.anonKey صحيح</li>
+                            <li>لا توجد أخطاء في Console</li>
+                        </ul>
+                    `;
+                }
+                
+                testEl.innerHTML = '<span class="warning">⏸️ لا يمكن الاختبار - Supabase غير جاهز</span>';
+            }
+            
+            statusEl.innerHTML = status;
+            solutionEl.innerHTML = solution;
+            
+        }, 500);
+    </script>
+</body>
+</html>
+

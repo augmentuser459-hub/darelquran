@@ -1,0 +1,445 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دار القرآن - الإعدادات</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Amiri Font for Quranic Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .tab {
+            padding: 12px 25px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+        .tab:hover { background: #f5f5f5; color: var(--primary-color); }
+        .tab.active { background: var(--primary-color); color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .settings-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .settings-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .setting-item:last-child { border-bottom: none; }
+        .setting-label { flex: 1; font-weight: 600; }
+        .setting-value { flex: 1; text-align: left; }
+        .setting-value input, .setting-value select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Cairo', sans-serif;
+        }
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .pricing-table thead {
+            background: var(--primary-color);
+            color: white;
+        }
+        .pricing-table th {
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .pricing-table th i {
+            margin-left: 8px;
+            font-size: 1.1rem;
+        }
+        .pricing-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .pricing-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+        .pricing-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .country-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        .country-flag-cell {
+            font-size: 1.8rem;
+        }
+        .currency-cell {
+            color: #333;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .currency-cell strong {
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+        .price-input {
+            width: 120px;
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .price-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(45, 95, 63, 0.1);
+        }
+        .price-input:hover {
+            border-color: #999;
+        }
+        .btn-lg {
+            padding: 12px 40px;
+            font-size: 1.1rem;
+        }
+        #customDurationGroup {
+            animation: slideDown 0.3s ease;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed var(--primary-color);
+            margin-top: 10px;
+        }
+        #customDurationGroup input {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            border: 2px solid var(--primary-color);
+        }
+        #customDurationGroup input:focus {
+            box-shadow: 0 0 0 3px rgba(45, 95, 63, 0.2);
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    
+    <!-- Auth Guard - Must be first script -->
+    <style>
+        body { opacity: 0; transition: opacity 0.3s ease; }
+        body.loaded { opacity: 1; }
+    </style>
+    <script src="/js/auth-guard.js?v=1.0"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+    </script>
+</head>
+<body>
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="/412228336_122100687200156181_4125175610950997201_n.jpg" alt="دار القرآن" class="sidebar-logo">
+                <h2 class="sidebar-title">دار القرآن</h2>
+                <p class="sidebar-subtitle">نظام إدارة المحفظين والطلبة</p>
+            </div>
+            <nav>
+                <ul class="sidebar-menu">
+                    <li class="menu-item"><a href="/" class="menu-link"><i class="fas fa-home menu-icon"></i><span>لوحة التحكم</span></a></li>
+                    <li class="menu-item"><a href="/pages/students.html" class="menu-link"><i class="fas fa-user-graduate menu-icon"></i><span>الطلبة</span></a></li>
+                    <li class="menu-item"><a href="/pages/teachers.html" class="menu-link"><i class="fas fa-chalkboard-teacher menu-icon"></i><span>المحفظين</span></a></li>
+                    <li class="menu-item"><a href="/pages/sessions.html" class="menu-link"><i class="fas fa-calendar-alt menu-icon"></i><span>الحصص</span></a></li>
+                    <li class="menu-item"><a href="/pages/scheduled-sessions.html" class="menu-link"><i class="fas fa-clock menu-icon"></i><span>الجدول الأسبوعي</span></a></li>
+                    <li class="menu-item"><a href="/pages/makeup-sessions.html" class="menu-link"><i class="fas fa-redo menu-icon"></i><span>الحصص التعويضية</span></a></li>
+                    <li class="menu-item"><a href="/pages/attendance.html" class="menu-link"><i class="fas fa-user-check menu-icon"></i><span>الحضور والغياب</span></a></li>
+                    <li class="menu-item"><a href="/pages/invoices.html" class="menu-link"><i class="fas fa-file-invoice menu-icon"></i><span>الفواتير</span></a></li>
+                    <li class="menu-item"><a href="/pages/payments.html" class="menu-link"><i class="fas fa-money-bill-wave menu-icon"></i><span>المدفوعات</span></a></li>
+                    <li class="menu-item" data-restricted="true"><a href="/pages/treasury.html" class="menu-link"><i class="fas fa-vault menu-icon"></i><span>الخزائن</span></a></li>
+                    <!-- <li class="menu-item"><a href="/pages/expenses.html" class="menu-link"><i class="fas fa-receipt menu-icon"></i><span>المصروفات</span></a></li> -->
+                    <li class="menu-item" data-restricted="true"><a href="/pages/teacher-salaries.html" class="menu-link"><i class="fas fa-wallet menu-icon"></i><span>رواتب المحفظين</span></a></li>
+                    <li class="menu-item" data-restricted="true"><a href="/pages/reports.html" class="menu-link"><i class="fas fa-chart-bar menu-icon"></i><span>التقارير</span></a></li>
+                    <li class="menu-item"><a href="/pages/settings.html" class="menu-link active"><i class="fas fa-cog menu-icon"></i><span>الإعدادات</span></a></li>
+                </ul>
+            </nav>
+            
+            <!-- Logout Button -->
+            <div style="padding: 1rem; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button onclick="logout()" class="btn" style="width: 100%; background: #dc3545; color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt" style="margin-left: 0.5rem;"></i>
+                    تسجيل الخروج
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1 class="header-title"><i class="fas fa-cog"></i> الإعدادات</h1>
+                <div class="header-verse">
+                    ﴿إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ﴾
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="saveAllSettings()">
+                        <i class="fas fa-save"></i> حفظ التغييرات
+                    </button>
+                </div>
+            </header>
+
+            <div class="content islamic-pattern">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('general', this)"><i class="fas fa-cog"></i> عام</button>
+                    <button class="tab" onclick="switchTab('pricing', this)"><i class="fas fa-dollar-sign"></i> أنظمة التسعير</button>
+                    <button class="tab" onclick="switchTab('country-pricing', this)"><i class="fas fa-globe"></i> أسعار الباقات حسب الدول</button>
+                </div>
+
+                <!-- General Settings -->
+                <div id="general" class="tab-content active">
+                    <div class="settings-section">
+                        <h3><i class="fas fa-building"></i> معلومات المؤسسة</h3>
+                        <div class="setting-item">
+                            <div class="setting-label">اسم المؤسسة</div>
+                            <div class="setting-value"><input type="text" id="institutionName" value="دار القرآن"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">البريد الإلكتروني</div>
+                            <div class="setting-value"><input type="email" id="institutionEmail" value="info@darquran.com"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">رقم الهاتف</div>
+                            <div class="setting-value"><input type="tel" id="institutionPhone" value="+966123456789"></div>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3><i class="fas fa-calendar-alt"></i> إعدادات الحصص</h3>
+                        <div class="setting-item">
+                            <div class="setting-label">مدة الحصة الافتراضية (دقيقة)</div>
+                            <div class="setting-value"><input type="number" id="defaultSessionDuration" value="60" min="15" max="180"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">عدد الاعتذارات المسموحة شهرياً</div>
+                            <div class="setting-value"><input type="number" id="monthlyExcusesLimit" value="4" min="0" max="10"></div>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3><i class="fas fa-file-invoice-dollar"></i> إعدادات الفواتير</h3>
+                        <div class="setting-item">
+                            <div class="setting-label">مدة الاستحقاق (أيام)</div>
+                            <div class="setting-value"><input type="number" id="invoiceDueDays" value="7" min="1" max="30"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">العملة الافتراضية</div>
+                            <div class="setting-value">
+                                <select id="defaultCurrency">
+                                    <option value="SAR">ريال سعودي (SAR)</option>
+                                    <option value="USD">دولار أمريكي (USD)</option>
+                                    <option value="EUR">يورو (EUR)</option>
+                                    <option value="EGP">جنيه مصري (EGP)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Plans -->
+                <div id="pricing" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-dollar-sign"></i> أنظمة التسعير</h3>
+                            <button class="btn btn-primary" onclick="showAddPricingPlanModal()">
+                                <i class="fas fa-plus"></i> إضافة نظام تسعير جديد
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">
+                                <i class="fas fa-info-circle"></i> 
+                                الباقات الأساسية المتاحة في النظام. لتعديل الأسعار حسب كل دولة، انتقل إلى تبويب "أسعار الباقات حسب الدول"
+                            </p>
+                        </div>
+                        <div class="table-container">
+                            <table class="table" id="pricingTable">
+                                <thead>
+                                    <tr>
+                                        <th>اسم الباقة</th>
+                                        <th>عدد الحصص</th>
+                                        <th>الوصف</th>
+                                        <th>عدد الدول</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Country Pricing -->
+                <div id="country-pricing" class="tab-content">
+                    <div class="settings-section">
+                        <h3><i class="fas fa-globe"></i> أسعار الباقات حسب الدول</h3>
+                        <p style="color: #666; margin-bottom: 20px;">
+                            <i class="fas fa-info-circle"></i> 
+                            قم بتحديد أسعار جميع الباقات لكل دولة. الأسعار بعملة كل دولة.
+                        </p>
+                        <div class="table-container">
+                            <table class="pricing-table" id="countryPricingTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 200px;">الدولة</th>
+                                        <th>العملة</th>
+                                        <th><i class="fas fa-book" style="color: #4CAF50;"></i> باقة حصتين</th>
+                                        <th><i class="fas fa-book-open" style="color: #2196F3;"></i> باقة 3 حصص</th>
+                                        <th><i class="fas fa-graduation-cap" style="color: #FF9800;"></i> باقة 4 حصص</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="countryPricingTableBody">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="margin-top: 20px; text-align: center;">
+                            <button class="btn btn-primary btn-lg" onclick="saveAllCountryPricing()">
+                                <i class="fas fa-save"></i> حفظ جميع الأسعار
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <!-- Pricing Modal -->
+    <div id="pricingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="pricingModalTitle"><i class="fas fa-dollar-sign"></i> إضافة نظام تسعير جديد</h2>
+                <span class="close" onclick="closePricingModal()">&times;</span>
+            </div>
+            <form id="pricingForm" onsubmit="savePricingPlan(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> اسم الباقة *</label>
+                    <input type="text" id="pricingName" class="form-control" required placeholder="مثال: باقة مكثفة">
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        <i class="fas fa-info-circle"></i> أدخل اسماً مميزاً للباقة
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-check"></i> عدد الحصص الأسبوعية *</label>
+                    <input type="number" id="pricingSessionsCount" class="form-control" min="1" max="20" required placeholder="مثال: 5">
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        <i class="fas fa-info-circle"></i> أدخل عدد الحصص في الأسبوع (مثلاً: 5 حصص، 6 حصص، إلخ)
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-clock"></i> مدة الحصة (بالدقائق) *</label>
+                    <select id="pricingSessionDuration" class="form-control" required onchange="toggleCustomDuration()">
+                        <option value="">اختر مدة الحصة</option>
+                        <option value="30">30 دقيقة (نصف ساعة)</option>
+                        <option value="45">45 دقيقة (ثلاثة أرباع الساعة)</option>
+                        <option value="60" selected>60 دقيقة (ساعة واحدة)</option>
+                        <option value="90">90 دقيقة (ساعة ونصف)</option>
+                        <option value="120">120 دقيقة (ساعتان)</option>
+                        <option value="custom">⚙️ مخصص (أدخل المدة يدوياً)</option>
+                    </select>
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        <i class="fas fa-info-circle"></i> حدد مدة الحصة الواحدة. يمكنك إضافة نفس عدد الحصص بمدد مختلفة
+                    </small>
+                </div>
+                <div class="form-group" id="customDurationGroup" style="display: none;">
+                    <label><i class="fas fa-edit"></i> المدة المخصصة (بالدقائق) *</label>
+                    <input 
+                        type="number" 
+                        id="customSessionDuration" 
+                        class="form-control" 
+                        min="5" 
+                        max="300" 
+                        step="5"
+                        placeholder="مثال: 75"
+                    >
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        <i class="fas fa-info-circle"></i> أدخل المدة بالدقائق (من 5 إلى 300 دقيقة)
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-sticky-note"></i> الوصف (اختياري)</label>
+                    <textarea id="pricingDescription" class="form-control" rows="3" placeholder="مثال: باقة مكثفة مناسبة للطلاب المتقدمين الذين يرغبون في حفظ أكبر قدر من القرآن"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePricingModal()"><i class="fas fa-times"></i> إلغاء</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ وإضافة للدول</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/db-logger.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/settings.js"></script>
+    
+    <!-- Burger Menu for Mobile -->
+    <script src="../js/burger-menu.js"></script>
+    
+    <!-- Hide restricted menu items for non-admin users -->
+    <script src="../js/hide-restricted-menu.js"></script>
+</body>
+</html>
+
+

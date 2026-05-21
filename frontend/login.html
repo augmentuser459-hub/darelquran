@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - دار القرآن</title>
+    
+    <!-- Cairo Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Amiri Font for Quranic Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #2c5f2d 0%, #1a3a1b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Islamic Pattern Background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.03) 35px, rgba(255,255,255,.03) 70px),
+                repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(255,255,255,.03) 35px, rgba(255,255,255,.03) 70px);
+            pointer-events: none;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s ease-out;
+            margin: auto;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #2c5f2d 0%, #1a3a1b 100%);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .login-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: white;
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-header p {
+            font-size: 1rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .quran-verse {
+            font-family: 'Amiri', serif;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            line-height: 1.8;
+        }
+
+        .login-body {
+            padding: 3rem 2.5rem 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c5f2d;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2c5f2d;
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.9rem 3rem 0.9rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2c5f2d;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(44, 95, 45, 0.1);
+        }
+
+        .toggle-password {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-password:hover {
+            color: #2c5f2d;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #2c5f2d 0%, #1a3a1b 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(44, 95, 45, 0.3);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 95, 45, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-login i {
+            margin-left: 0.5rem;
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.9rem;
+            border-right: 4px solid #c33;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            /* Small laptops */
+            body {
+                align-items: flex-start;
+                padding: 20px 15px;
+            }
+            
+            .login-container {
+                max-width: 420px;
+                margin: 20px auto;
+            }
+            
+            .login-header {
+                padding: 2.5rem 2rem 1.75rem;
+            }
+            
+            .logo-container {
+                width: 85px;
+                height: 85px;
+            }
+            
+            .login-header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .login-header p {
+                font-size: 0.95rem;
+            }
+            
+            .quran-verse {
+                font-size: 1rem;
+                padding: 0.9rem;
+            }
+            
+            .login-body {
+                padding: 2.5rem 2rem;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            /* Tablets and small laptops */
+            body {
+                padding: 15px 10px;
+            }
+            
+            .login-container {
+                max-width: 400px;
+                margin: 15px auto;
+            }
+            
+            .login-header {
+                padding: 2rem 1.75rem 1.5rem;
+            }
+            
+            .logo-container {
+                width: 75px;
+                height: 75px;
+            }
+            
+            .login-header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .login-header p {
+                font-size: 0.9rem;
+            }
+            
+            .quran-verse {
+                font-size: 0.95rem;
+                padding: 0.85rem;
+            }
+            
+            .login-body {
+                padding: 2.25rem 1.75rem;
+            }
+            
+            .form-control {
+                padding: 0.85rem 2.85rem 0.85rem 0.95rem;
+                font-size: 0.95rem;
+            }
+            
+            .btn-login {
+                padding: 0.9rem;
+                font-size: 1.05rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+            }
+            
+            .login-container {
+                max-width: 100%;
+                margin: 10px auto;
+                border-radius: 15px;
+            }
+
+            .login-header {
+                padding: 2rem 1.5rem 1.5rem;
+            }
+            
+            .logo-container {
+                width: 70px;
+                height: 70px;
+                margin-bottom: 1rem;
+                border-width: 3px;
+            }
+
+            .login-header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .login-header p {
+                font-size: 0.85rem;
+            }
+
+            .quran-verse {
+                font-size: 0.95rem;
+                padding: 0.75rem;
+                margin-top: 0.75rem;
+                line-height: 1.6;
+            }
+
+            .login-body {
+                padding: 2rem 1.25rem 1.5rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+            
+            .form-group label {
+                font-size: 0.9rem;
+                margin-bottom: 0.4rem;
+            }
+            
+            .form-control {
+                padding: 0.75rem 2.75rem 0.75rem 0.9rem;
+                font-size: 0.95rem;
+            }
+            
+            .input-icon {
+                font-size: 1rem;
+                right: 12px;
+            }
+            
+            .toggle-password {
+                font-size: 1rem;
+                left: 12px;
+            }
+            
+            .btn-login {
+                padding: 0.85rem;
+                font-size: 1rem;
+                margin-top: 0.75rem;
+            }
+            
+            .login-footer {
+                padding: 1.25rem;
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            
+            .login-container {
+                border-radius: 12px;
+                margin: 8px auto;
+            }
+
+            .login-header {
+                padding: 1.5rem 1rem 1rem;
+            }
+            
+            .logo-container {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 0.75rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .login-header p {
+                font-size: 0.8rem;
+            }
+
+            .quran-verse {
+                font-size: 0.85rem;
+                padding: 0.6rem 0.75rem;
+                margin-top: 0.6rem;
+            }
+
+            .login-body {
+                padding: 1.5rem 1rem 1.25rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .form-group label {
+                font-size: 0.85rem;
+            }
+            
+            .form-control {
+                padding: 0.7rem 2.5rem 0.7rem 0.85rem;
+                font-size: 0.9rem;
+            }
+            
+            .input-icon {
+                font-size: 0.95rem;
+                right: 10px;
+            }
+            
+            .toggle-password {
+                font-size: 0.95rem;
+                left: 10px;
+            }
+            
+            .btn-login {
+                padding: 0.75rem;
+                font-size: 0.95rem;
+            }
+            
+            .login-footer {
+                padding: 1rem;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            /* Extra small screens like iPhone SE */
+            body {
+                padding: 5px;
+            }
+            
+            .login-container {
+                margin: 5px auto;
+            }
+            
+            .login-header {
+                padding: 1.25rem 0.85rem 0.85rem;
+            }
+            
+            .logo-container {
+                width: 55px;
+                height: 55px;
+            }
+            
+            .login-header h1 {
+                font-size: 1.2rem;
+            }
+            
+            .login-header p {
+                font-size: 0.75rem;
+            }
+            
+            .quran-verse {
+                font-size: 0.8rem;
+                padding: 0.5rem 0.6rem;
+            }
+            
+            .login-body {
+                padding: 1.25rem 0.85rem 1rem;
+            }
+            
+            .form-control {
+                padding: 0.65rem 2.4rem 0.65rem 0.75rem;
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-height: 700px) {
+            /* Short screens - enable scrolling */
+            body {
+                align-items: flex-start;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+            
+            .login-container {
+                margin: 10px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo-container">
+                <img src="./412228336_122100687200156181_4125175610950997201_n.jpg" alt="دار القرآن">
+            </div>
+            <h1>دار القرآن</h1>
+            <p>نظام إدارة المحفظين والطلبة</p>
+            <div class="quran-verse">
+                ﴿إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ﴾
+            </div>
+        </div>
+
+        <div class="login-body">
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText"></span>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i>
+                        اسم المستخدم
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            class="form-control" 
+                            placeholder="أدخل اسم المستخدم"
+                            required
+                            autocomplete="username"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i>
+                        كلمة المرور
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-control" 
+                            placeholder="أدخل كلمة المرور"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <i class="fas fa-eye toggle-password" id="togglePassword" onclick="togglePasswordVisibility()"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span id="loginBtnText">
+                        تسجيل الدخول
+                        <i class="fas fa-sign-in-alt"></i>
+                    </span>
+                </button>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            <p>© 2024 دار القرآن - جميع الحقوق محفوظة</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./js/auth.js"></script>
+</body>
+</html>

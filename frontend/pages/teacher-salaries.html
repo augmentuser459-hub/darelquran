@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دار القرآن - رواتب المحفظين</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Amiri Font for Quranic Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="/412228336_122100687200156181_4125175610950997201_n.jpg" alt="دار القرآن" class="sidebar-logo">
+                <h2 class="sidebar-title">دار القرآن</h2>
+                <p class="sidebar-subtitle">نظام إدارة المحفظين والطلبة</p>
+            </div>
+            <nav>
+                <ul class="sidebar-menu">
+                    <li class="menu-item"><a href="/" class="menu-link"><i class="fas fa-home menu-icon"></i><span>لوحة التحكم</span></a></li>
+                    <li class="menu-item"><a href="/pages/students.html" class="menu-link"><i class="fas fa-user-graduate menu-icon"></i><span>الطلبة</span></a></li>
+                    <li class="menu-item"><a href="/pages/teachers.html" class="menu-link"><i class="fas fa-chalkboard-teacher menu-icon"></i><span>المحفظين</span></a></li>
+                    <li class="menu-item"><a href="/pages/sessions.html" class="menu-link"><i class="fas fa-calendar-alt menu-icon"></i><span>الحصص</span></a></li>
+                    <li class="menu-item"><a href="/pages/scheduled-sessions.html" class="menu-link"><i class="fas fa-clock menu-icon"></i><span>الجدول الأسبوعي</span></a></li>
+                    <li class="menu-item"><a href="/pages/makeup-sessions.html" class="menu-link"><i class="fas fa-redo menu-icon"></i><span>الحصص التعويضية</span></a></li>
+                    <li class="menu-item"><a href="/pages/attendance.html" class="menu-link"><i class="fas fa-user-check menu-icon"></i><span>الحضور والغياب</span></a></li>
+                    <li class="menu-item"><a href="/pages/invoices.html" class="menu-link"><i class="fas fa-file-invoice menu-icon"></i><span>الفواتير</span></a></li>
+                    <li class="menu-item"><a href="/pages/payments.html" class="menu-link"><i class="fas fa-money-bill-wave menu-icon"></i><span>المدفوعات</span></a></li>
+                    <li class="menu-item" data-restricted="true"><a href="/pages/treasury.html" class="menu-link"><i class="fas fa-vault menu-icon"></i><span>الخزائن</span></a></li>
+                    <!-- <li class="menu-item"><a href="/pages/expenses.html" class="menu-link"><i class="fas fa-receipt menu-icon"></i><span>المصروفات</span></a></li> -->
+                    <li class="menu-item" data-restricted="true"><a href="/pages/teacher-salaries.html" class="menu-link active"><i class="fas fa-wallet menu-icon"></i><span>رواتب المحفظين</span></a></li>
+                    <li class="menu-item" data-restricted="true"><a href="/pages/reports.html" class="menu-link"><i class="fas fa-chart-bar menu-icon"></i><span>التقارير</span></a></li>
+                    <li class="menu-item"><a href="/pages/settings.html" class="menu-link"><i class="fas fa-cog menu-icon"></i><span>الإعدادات</span></a></li>
+                </ul>
+            </nav>
+            
+            <!-- Logout Button -->
+            <div style="padding: 1rem; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button onclick="logout()" class="btn" style="width: 100%; background: #dc3545; color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt" style="margin-left: 0.5rem;"></i>
+                    تسجيل الخروج
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1 class="header-title"><i class="fas fa-wallet"></i> رواتب المحفظين</h1>
+                <div class="header-verse">
+                    ﴿إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ﴾
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddSalaryModal()">
+                        <i class="fas fa-plus"></i> تسجيل راتب
+                    </button>
+                </div>
+            </header>
+
+            <div class="content islamic-pattern">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-value" id="totalTeachers">0</div>
+                        <div class="stat-label">عدد المحفظين</div>
+                    </div>
+                    <div class="stat-card gold">
+                        <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="stat-value" id="totalPaid">0</div>
+                        <div class="stat-label">إجمالي المدفوع</div>
+                    </div>
+                    <div class="stat-card brown">
+                        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                        <div class="stat-value" id="monthPaid">0</div>
+                        <div class="stat-label">مدفوعات الشهر</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-list"></i> سجل الرواتب</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="table" id="salariesTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>المحفظ</th>
+                                    <th>الشهر</th>
+                                    <th>المبلغ</th>
+                                    <th>تاريخ الدفع</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <!-- Salary Modal -->
+    <div id="salaryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"><i class="fas fa-wallet"></i> تسجيل راتب</h2>
+                <span class="close" onclick="closeSalaryModal()">&times;</span>
+            </div>
+            <form id="salaryForm">
+                <input type="hidden" id="salaryId">
+                <div class="form-group">
+                    <label><i class="fas fa-chalkboard-teacher"></i> المحفظ *</label>
+                    <select id="teacherId" class="form-control" required>
+                        <option value="">اختر المحفظ</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> الشهر *</label>
+                        <input type="month" id="salaryMonth" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-dollar-sign"></i> الراتب الأساسي *</label>
+                        <input type="number" id="amount" class="form-control" step="0.01" min="0" required readonly>
+                        <small style="color: #6c757d; display: block; margin-top: 0.25rem;">
+                            <i class="fas fa-info-circle"></i>
+                            يتم الحساب تلقائياً عند اختيار المحفظ والشهر
+                        </small>
+                    </div>
+                </div>
+                
+                <div id="sessionsInfo"></div>
+                
+                <!-- Bonus and Deduction Section -->
+                <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 0.5rem; margin: 1rem 0;">
+                    <h4 style="color: #1a5f7a; margin-bottom: 1rem; font-size: 1.1rem;">
+                        <i class="fas fa-calculator"></i> الخصومات والإضافات
+                    </h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-plus-circle" style="color: #28a745;"></i> مكافأة / زيادة</label>
+                            <input type="number" id="bonusAmount" class="form-control" step="0.01" min="0" value="0" oninput="calculateTotal()">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-minus-circle" style="color: #dc3545;"></i> خصم</label>
+                            <input type="number" id="deductionAmount" class="form-control" step="0.01" min="0" value="0" oninput="calculateTotal()">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-sticky-note"></i> سبب المكافأة / الخصم</label>
+                        <textarea id="adjustmentNotes" class="form-control" rows="2" placeholder="اكتب سبب المكافأة أو الخصم..."></textarea>
+                    </div>
+                    
+                    <!-- Total Display -->
+                    <div style="background: white; padding: 1rem; border-radius: 0.5rem; border: 2px solid #1a5f7a; margin-top: 1rem;">
+                        <div style="display: grid; gap: 0.5rem; font-size: 0.95rem;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>الراتب الأساسي:</span>
+                                <strong id="displayBaseSalary">0.00 ر.س</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; color: #28a745;">
+                                <span><i class="fas fa-plus"></i> المكافأة:</span>
+                                <strong id="displayBonus">0.00 ر.س</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; color: #dc3545;">
+                                <span><i class="fas fa-minus"></i> الخصم:</span>
+                                <strong id="displayDeduction">0.00 ر.س</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 2px solid #1a5f7a; color: #1a5f7a; font-size: 1.2rem;">
+                                <span><strong>الإجمالي النهائي:</strong></span>
+                                <strong id="displayTotal">0.00 ر.س</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-check"></i> تاريخ الدفع</label>
+                    <input type="date" id="paymentDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-sticky-note"></i> ملاحظات</label>
+                    <textarea id="notes" class="form-control" rows="3"></textarea>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeSalaryModal()"><i class="fas fa-times"></i> إلغاء</button>
+                <button type="submit" form="salaryForm" class="btn btn-primary"><i class="fas fa-save"></i> حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/db-logger.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/teacher-salaries.js"></script>
+    
+    <!-- Burger Menu for Mobile -->
+    <script src="../js/burger-menu.js"></script>
+    
+    <!-- Hide restricted menu items for non-admin users -->
+    <script src="../js/hide-restricted-menu.js"></script>
+</body>
+</html>
+
+

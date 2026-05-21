@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دار القرآن - المصروفات</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Amiri Font for Quranic Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../412228336_122100687200156181_4125175610950997201_n.jpg" alt="دار القرآن" class="sidebar-logo">
+                <h2 class="sidebar-title">دار القرآن</h2>
+                <p class="sidebar-subtitle">نظام إدارة المحفظين والطلبة</p>
+            </div>
+            <nav>
+                <ul class="sidebar-menu">
+                    <li class="menu-item"><a href="../index.html" class="menu-link"><i class="fas fa-home menu-icon"></i><span>لوحة التحكم</span></a></li>
+                    <li class="menu-item"><a href="./students.html" class="menu-link"><i class="fas fa-user-graduate menu-icon"></i><span>الطلبة</span></a></li>
+                    <li class="menu-item"><a href="./teachers.html" class="menu-link"><i class="fas fa-chalkboard-teacher menu-icon"></i><span>المحفظين</span></a></li>
+                    <li class="menu-item"><a href="./sessions.html" class="menu-link"><i class="fas fa-calendar-alt menu-icon"></i><span>الحصص</span></a></li>
+                    <li class="menu-item"><a href="./scheduled-sessions.html" class="menu-link"><i class="fas fa-clock menu-icon"></i><span>الجدول الأسبوعي</span></a></li>
+                    <li class="menu-item"><a href="./makeup-sessions.html" class="menu-link"><i class="fas fa-redo menu-icon"></i><span>الحصص التعويضية</span></a></li>
+                    <li class="menu-item"><a href="./attendance.html" class="menu-link"><i class="fas fa-user-check menu-icon"></i><span>الحضور والغياب</span></a></li>
+                    <li class="menu-item"><a href="./invoices.html" class="menu-link"><i class="fas fa-file-invoice menu-icon"></i><span>الفواتير</span></a></li>
+                    <li class="menu-item"><a href="./payments.html" class="menu-link"><i class="fas fa-money-bill-wave menu-icon"></i><span>المدفوعات</span></a></li>
+                    <li class="menu-item" data-restricted="true"><a href="./treasury.html" class="menu-link"><i class="fas fa-vault menu-icon"></i><span>الخزائن</span></a></li>
+                    <li class="menu-item"><a href="./expenses.html" class="menu-link active"><i class="fas fa-receipt menu-icon"></i><span>المصروفات</span></a></li>
+                    <li class="menu-item" data-restricted="true"><a href="./teacher-salaries.html" class="menu-link"><i class="fas fa-wallet menu-icon"></i><span>رواتب المحفظين</span></a></li>
+                    <li class="menu-item" data-restricted="true"><a href="./reports.html" class="menu-link"><i class="fas fa-chart-bar menu-icon"></i><span>التقارير</span></a></li>
+                    <li class="menu-item"><a href="./settings.html" class="menu-link"><i class="fas fa-cog menu-icon"></i><span>الإعدادات</span></a></li>
+                </ul>
+            </nav>
+            
+            <!-- Logout Button -->
+            <div style="padding: 1rem; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button onclick="logout()" class="btn" style="width: 100%; background: #dc3545; color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt" style="margin-left: 0.5rem;"></i>
+                    تسجيل الخروج
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 class="header-title"><i class="fas fa-receipt"></i> إدارة المصروفات</h1>
+                <div class="header-verse">
+                    ﴿إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ﴾
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddExpenseModal()">
+                        <i class="fas fa-plus"></i> إضافة مصروف
+                    </button>
+                </div>
+            </header>
+
+            <div class="content islamic-pattern">
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+                        <div class="stat-value" id="totalExpenses">0</div>
+                        <div class="stat-label">إجمالي المصروفات</div>
+                    </div>
+                    <div class="stat-card gold">
+                        <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="stat-value" id="totalAmount">0</div>
+                        <div class="stat-label">المبلغ الإجمالي</div>
+                    </div>
+                    <div class="stat-card brown">
+                        <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                        <div class="stat-value" id="monthExpenses">0</div>
+                        <div class="stat-label">مصروفات الشهر</div>
+                    </div>
+                </div>
+
+                <!-- Expenses Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-list"></i> قائمة المصروفات</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="table" id="expensesTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>الوصف</th>
+                                    <th>الفئة</th>
+                                    <th>المبلغ</th>
+                                    <th>التاريخ</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <!-- Expense Modal -->
+    <div id="expenseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"><i class="fas fa-receipt"></i> إضافة مصروف</h2>
+                <span class="close" onclick="closeExpenseModal()">&times;</span>
+            </div>
+            <form id="expenseForm">
+                <input type="hidden" id="expenseId">
+                <div class="form-group">
+                    <label><i class="fas fa-align-left"></i> الوصف *</label>
+                    <input type="text" id="description" class="form-control" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-folder"></i> الفئة *</label>
+                        <select id="category" class="form-control" required>
+                            <option value="utilities">مرافق</option>
+                            <option value="supplies">مستلزمات</option>
+                            <option value="maintenance">صيانة</option>
+                            <option value="rent">إيجار</option>
+                            <option value="other">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-dollar-sign"></i> المبلغ *</label>
+                        <input type="number" id="amount" class="form-control" step="0.01" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> التاريخ *</label>
+                    <input type="date" id="expenseDate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-sticky-note"></i> ملاحظات</label>
+                    <textarea id="notes" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeExpenseModal()"><i class="fas fa-times"></i> إلغاء</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/db-logger.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/expenses.js"></script>
+    
+    <!-- Burger Menu for Mobile -->
+    <script src="../js/burger-menu.js"></script>
+    
+    <!-- Hide restricted menu items for non-admin users -->
+    <script src="../js/hide-restricted-menu.js"></script>
+</body>
+</html>
+
+

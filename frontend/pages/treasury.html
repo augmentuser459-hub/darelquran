@@ -1,0 +1,607 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الخزائن - دار القرآن</title>
+    
+    <!-- Cairo Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <!-- Auth Guard - Must be first script -->
+    <style>
+        body { opacity: 0; transition: opacity 0.3s ease; }
+        body.loaded { opacity: 1; }
+    </style>
+    <script src="/js/auth-guard.js?v=1.0"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+    </script>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../412228336_122100687200156181_4125175610950997201_n.jpg" alt="دار القرآن" class="sidebar-logo">
+                <h2 class="sidebar-title">دار القرآن</h2>
+                <p class="sidebar-subtitle">نظام إدارة المحفظين والطلبة</p>
+            </div>
+            
+            <nav>
+                <ul class="sidebar-menu">
+                    <li class="menu-item">
+                        <a href="../index.html" class="menu-link">
+                            <i class="fas fa-home menu-icon"></i>
+                            <span>لوحة التحكم</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./students.html" class="menu-link">
+                            <i class="fas fa-user-graduate menu-icon"></i>
+                            <span>الطلبة</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./teachers.html" class="menu-link">
+                            <i class="fas fa-chalkboard-teacher menu-icon"></i>
+                            <span>المحفظين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./sessions.html" class="menu-link">
+                            <i class="fas fa-calendar-alt menu-icon"></i>
+                            <span>الحصص</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./scheduled-sessions.html" class="menu-link">
+                            <i class="fas fa-clock menu-icon"></i>
+                            <span>الجدول الأسبوعي</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./makeup-sessions.html" class="menu-link">
+                            <i class="fas fa-redo menu-icon"></i>
+                            <span>الحصص التعويضية</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./attendance.html" class="menu-link">
+                            <i class="fas fa-user-check menu-icon"></i>
+                            <span>الحضور والغياب</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./invoices.html" class="menu-link">
+                            <i class="fas fa-file-invoice menu-icon"></i>
+                            <span>الفواتير</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./payments.html" class="menu-link">
+                            <i class="fas fa-money-bill-wave menu-icon"></i>
+                            <span>المدفوعات</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./treasury.html" class="menu-link active">
+                            <i class="fas fa-vault menu-icon"></i>
+                            <span>الخزائن</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./teacher-salaries.html" class="menu-link">
+                            <i class="fas fa-wallet menu-icon"></i>
+                            <span>رواتب المحفظين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./reports.html" class="menu-link">
+                            <i class="fas fa-chart-bar menu-icon"></i>
+                            <span>التقارير</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./settings.html" class="menu-link">
+                            <i class="fas fa-cog menu-icon"></i>
+                            <span>الإعدادات</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Logout Button -->
+            <div style="padding: 1rem; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button onclick="logout()" class="btn" style="width: 100%; background: #dc3545; color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt" style="margin-left: 0.5rem;"></i>
+                    تسجيل الخروج
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">
+                    <i class="fas fa-vault"></i>
+                    الخزائن
+                </h1>
+                
+                <div class="header-actions">
+                    <button class="btn btn-success" onclick="showTransferModal()" style="margin-left: 0.5rem;">
+                        <i class="fas fa-exchange-alt"></i>
+                        تحويل بين الخزائن
+                    </button>
+                    <button class="btn btn-primary" onclick="refreshTreasury()">
+                        <i class="fas fa-sync-alt"></i>
+                        تحديث
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Content -->
+            <div class="content">
+                <!-- Summary Stats -->
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-value" id="totalTreasuries">0</div>
+                        <div class="stat-label">عدد الخزائن</div>
+                    </div>
+                    
+                    <div class="stat-card gold">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-value" id="totalPayments">0</div>
+                        <div class="stat-label">إجمالي المدفوعات</div>
+                    </div>
+                    
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-value" id="todayPayments">0</div>
+                        <div class="stat-label">مدفوعات اليوم</div>
+                    </div>
+                    
+                    <div class="stat-card brown">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <div class="stat-value" id="weekPayments">0</div>
+                        <div class="stat-label">مدفوعات الأسبوع</div>
+                    </div>
+                </div>
+                
+                <!-- Treasury Cards -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-vault"></i>
+                            رصيد الخزائن حسب العملة
+                        </h3>
+                    </div>
+                    
+                    <div id="treasuryCardsContainer" style="padding: 1.5rem;">
+                        <div style="text-align: center; padding: 3rem;">
+                            <div class="spinner"></div>
+                            <p>جاري تحميل البيانات...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Payments by Currency -->
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-exchange-alt"></i>
+                            سجل التحويلات بين الخزائن
+                        </h3>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="transfersTable">
+                            <thead>
+                                <tr>
+                                    <th>رقم التحويل</th>
+                                    <th>من</th>
+                                    <th>إلى</th>
+                                    <th>المبلغ المحول</th>
+                                    <th>سعر الصرف</th>
+                                    <th>المبلغ المستلم</th>
+                                    <th>التاريخ</th>
+                                    <th>ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transfersTableBody">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner"></div>
+                                        <p>جاري تحميل البيانات...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- EGP Treasury Transactions -->
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-receipt"></i>
+                            سجل معاملات الخزائن
+                        </h3>
+                        <div>
+                            <select id="transactionCurrencyFilter" class="form-control" style="display: inline-block; width: auto;" onchange="filterTransactionsByCurrency()">
+                                <option value="">جميع الخزائن</option>
+                                <option value="EGP">مصر (ج.م)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="transactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>رقم العملية</th>
+                                    <th>الخزنة</th>
+                                    <th>النوع</th>
+                                    <th>المبلغ</th>
+                                    <th>البند</th>
+                                    <th>التاريخ</th>
+                                    <th>الوصف</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner"></div>
+                                        <p>جاري تحميل البيانات...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Recent Payments by Currency -->
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-history"></i>
+                            آخر المدفوعات
+                        </h3>
+                        <div>
+                            <select id="currencyFilter" class="form-control" style="display: inline-block; width: auto; margin-left: 1rem;" onchange="filterPaymentsByCurrency()">
+                                <option value="">جميع العملات</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="paymentsTable">
+                            <thead>
+                                <tr>
+                                    <th>رقم الدفعة</th>
+                                    <th>الطالب</th>
+                                    <th>الدولة</th>
+                                    <th>المبلغ</th>
+                                    <th>العملة</th>
+                                    <th>التاريخ</th>
+                                    <th>الطريقة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner"></div>
+                                        <p>جاري تحميل البيانات...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Deposit Modal -->
+    <div id="depositModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>
+                    <i class="fas fa-plus-circle" style="color: #28a745;"></i>
+                    إيداع في الخزنة
+                </h2>
+                <span class="close" onclick="closeDepositModal()">&times;</span>
+            </div>
+            
+            <form id="depositForm">
+                <input type="hidden" id="depositCurrency">
+                <input type="hidden" id="depositCurrencySymbol">
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-money-bill-wave"></i>
+                        المبلغ *
+                    </label>
+                    <input type="number" id="depositAmount" class="form-control" step="0.01" min="0.01" required>
+                    <small style="color: #6c757d; display: block; margin-top: 0.25rem;">
+                        <i class="fas fa-info-circle"></i>
+                        أدخل المبلغ المراد إيداعه
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-tag"></i>
+                        البند / السبب
+                    </label>
+                    <select id="depositCategory" class="form-control">
+                        <option value="">اختر البند (اختياري)</option>
+                        <option value="إيداع نقدي">إيداع نقدي</option>
+                        <option value="تحويل بنكي">تحويل بنكي</option>
+                        <option value="إيرادات">إيرادات</option>
+                        <option value="تبرع">تبرع</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-calendar"></i>
+                        تاريخ الإيداع *
+                    </label>
+                    <input type="date" id="depositDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-sticky-note"></i>
+                        ملاحظات
+                    </label>
+                    <textarea id="depositDescription" class="form-control" rows="3" placeholder="أضف أي ملاحظات إضافية..."></textarea>
+                </div>
+            </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDepositModal()">
+                    <i class="fas fa-times"></i>
+                    إلغاء
+                </button>
+                <button type="submit" form="depositForm" class="btn btn-success">
+                    <i class="fas fa-check"></i>
+                    تأكيد الإيداع
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Withdrawal Modal -->
+    <div id="withdrawalModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>
+                    <i class="fas fa-minus-circle" style="color: #dc3545;"></i>
+                    صرف من الخزنة
+                </h2>
+                <span class="close" onclick="closeWithdrawalModal()">&times;</span>
+            </div>
+            
+            <form id="withdrawalForm">
+                <input type="hidden" id="withdrawalCurrency">
+                <input type="hidden" id="withdrawalCurrencySymbol">
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-money-bill-wave"></i>
+                        المبلغ *
+                    </label>
+                    <input type="number" id="withdrawalAmount" class="form-control" step="0.01" min="0.01" required>
+                    <small style="color: #6c757d; display: block; margin-top: 0.25rem;">
+                        <i class="fas fa-info-circle"></i>
+                        أدخل المبلغ المراد صرفه
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-tag"></i>
+                        البند / السبب
+                    </label>
+                    <select id="withdrawalCategory" class="form-control">
+                        <option value="">اختر البند (اختياري)</option>
+                        <option value="كهرباء">كهرباء</option>
+                        <option value="مياه">مياه</option>
+                        <option value="إيجار">إيجار</option>
+                        <option value="صيانة">صيانة</option>
+                        <option value="مصروفات إدارية">مصروفات إدارية</option>
+                        <option value="رواتب">رواتب</option>
+                        <option value="مستلزمات">مستلزمات</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-calendar"></i>
+                        تاريخ الصرف *
+                    </label>
+                    <input type="date" id="withdrawalDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-sticky-note"></i>
+                        ملاحظات
+                    </label>
+                    <textarea id="withdrawalDescription" class="form-control" rows="3" placeholder="أضف أي ملاحظات إضافية..."></textarea>
+                </div>
+            </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeWithdrawalModal()">
+                    <i class="fas fa-times"></i>
+                    إلغاء
+                </button>
+                <button type="submit" form="withdrawalForm" class="btn btn-danger">
+                    <i class="fas fa-check"></i>
+                    تأكيد الصرف
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Transfer Modal -->
+    <div id="transferModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="transferModalTitle">
+                    <i class="fas fa-exchange-alt"></i>
+                    تحويل بين الخزائن
+                </h2>
+                <span class="close" onclick="closeTransferModal()">&times;</span>
+            </div>
+            
+            <form id="transferForm">
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-vault"></i>
+                        من خزنة *
+                    </label>
+                    <select id="fromTreasury" class="form-control" required onchange="updateFromTreasuryInfo()">
+                        <option value="">اختر الخزنة المصدر</option>
+                    </select>
+                    <div id="fromTreasuryInfo" style="margin-top: 0.5rem;"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-vault"></i>
+                        إلى خزنة *
+                    </label>
+                    <select id="toTreasury" class="form-control" required onchange="calculateConversion()">
+                        <option value="">اختر الخزنة المستهدفة</option>
+                    </select>
+                    <div id="toTreasuryInfo" style="margin-top: 0.5rem;"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-money-bill-wave"></i>
+                        المبلغ المراد تحويله *
+                    </label>
+                    <input type="number" id="transferAmount" class="form-control" step="0.01" min="0.01" required oninput="calculateConversion()">
+                    <small style="color: #6c757d; display: block; margin-top: 0.25rem;">
+                        <i class="fas fa-info-circle"></i>
+                        أدخل المبلغ بعملة الخزنة المصدر
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-calculator"></i>
+                        سعر الصرف *
+                    </label>
+                    <input type="number" id="exchangeRate" class="form-control" step="0.0001" min="0.0001" required oninput="calculateConversion()">
+                    <small style="color: #6c757d; display: block; margin-top: 0.25rem;">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="exchangeRateHint">مثال: إذا كان 1 ريال = 14 جنيه، أدخل 14</span>
+                    </small>
+                </div>
+                
+                <!-- Conversion Result -->
+                <div id="conversionResult" style="background: #e7f3ff; padding: 1.5rem; border-radius: 0.5rem; border-right: 4px solid #1a5f7a; margin: 1rem 0; display: none;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                        <i class="fas fa-calculator" style="color: #1a5f7a; font-size: 1.2rem;"></i>
+                        <strong style="color: #1a5f7a; font-size: 1.1rem;">نتيجة التحويل</strong>
+                    </div>
+                    <div style="display: grid; gap: 0.75rem; font-size: 0.95rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #ccc;">
+                            <span>المبلغ المحول:</span>
+                            <strong id="displayFromAmount">0.00</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #ccc;">
+                            <span>سعر الصرف:</span>
+                            <strong id="displayExchangeRate">0.0000</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 1rem 0; border-top: 2px solid #1a5f7a; color: #1a5f7a; font-size: 1.2rem;">
+                            <span><strong>المبلغ المستلم:</strong></span>
+                            <strong id="displayToAmount">0.00</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-calendar"></i>
+                        تاريخ التحويل *
+                    </label>
+                    <input type="date" id="transferDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-sticky-note"></i>
+                        ملاحظات
+                    </label>
+                    <textarea id="transferNotes" class="form-control" rows="3" placeholder="أضف أي ملاحظات عن التحويل..."></textarea>
+                </div>
+            </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeTransferModal()">
+                    <i class="fas fa-times"></i>
+                    إلغاء
+                </button>
+                <button type="submit" form="transferForm" class="btn btn-success">
+                    <i class="fas fa-check"></i>
+                    تأكيد التحويل
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/db-logger.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/treasury.js"></script>
+    
+    <!-- Burger Menu for Mobile -->
+    <script src="../js/burger-menu.js"></script>
+    
+    <!-- Hide restricted menu items for non-admin users -->
+    <script src="../js/hide-restricted-menu.js"></script>
+</body>
+</html>

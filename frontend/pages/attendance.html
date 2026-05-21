@@ -1,0 +1,259 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دار القرآن - الحضور والغياب</title>
+    
+    <!-- Cairo Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Amiri Font for Quranic Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <!-- Auth Guard - Must be first script -->
+    <style>
+        body { opacity: 0; transition: opacity 0.3s ease; }
+        body.loaded { opacity: 1; }
+    </style>
+    <script src="/js/auth-guard.js?v=1.0"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+    </script>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../412228336_122100687200156181_4125175610950997201_n.jpg" alt="دار القرآن" class="sidebar-logo">
+                <h2 class="sidebar-title">دار القرآن</h2>
+                <p class="sidebar-subtitle">نظام إدارة المحفظين والطلبة</p>
+            </div>
+            
+            <nav>
+                <ul class="sidebar-menu">
+                    <li class="menu-item">
+                        <a href="../index.html" class="menu-link">
+                            <i class="fas fa-home menu-icon"></i>
+                            <span>لوحة التحكم</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./students.html" class="menu-link">
+                            <i class="fas fa-user-graduate menu-icon"></i>
+                            <span>الطلبة</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./teachers.html" class="menu-link">
+                            <i class="fas fa-chalkboard-teacher menu-icon"></i>
+                            <span>المحفظين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./sessions.html" class="menu-link">
+                            <i class="fas fa-calendar-alt menu-icon"></i>
+                            <span>الحصص</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./scheduled-sessions.html" class="menu-link">
+                            <i class="fas fa-clock menu-icon"></i>
+                            <span>الجدول الأسبوعي</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./makeup-sessions.html" class="menu-link">
+                            <i class="fas fa-redo menu-icon"></i>
+                            <span>الحصص التعويضية</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./attendance.html" class="menu-link active">
+                            <i class="fas fa-user-check menu-icon"></i>
+                            <span>الحضور والغياب</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./invoices.html" class="menu-link">
+                            <i class="fas fa-file-invoice menu-icon"></i>
+                            <span>الفواتير</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./payments.html" class="menu-link">
+                            <i class="fas fa-money-bill-wave menu-icon"></i>
+                            <span>المدفوعات</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./treasury.html" class="menu-link">
+                            <i class="fas fa-vault menu-icon"></i>
+                            <span>الخزائن</span>
+                        </a>
+                    </li>
+                    <!-- <li class="menu-item">
+                        <a href="./expenses.html" class="menu-link">
+                            <i class="fas fa-receipt menu-icon"></i>
+                            <span>المصروفات</span>
+                        </a>
+                    </li> -->
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./teacher-salaries.html" class="menu-link">
+                            <i class="fas fa-wallet menu-icon"></i>
+                            <span>رواتب المحفظين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./reports.html" class="menu-link">
+                            <i class="fas fa-chart-bar menu-icon"></i>
+                            <span>التقارير</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./settings.html" class="menu-link">
+                            <i class="fas fa-cog menu-icon"></i>
+                            <span>الإعدادات</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Logout Button -->
+            <div style="padding: 1rem; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button onclick="logout()" class="btn" style="width: 100%; background: #dc3545; color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt" style="margin-left: 0.5rem;"></i>
+                    تسجيل الخروج
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">
+                    <i class="fas fa-user-check"></i>
+                    الحضور والغياب
+                </h1>
+                
+                <div class="header-verse">
+                    ﴿إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ﴾
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content islamic-pattern">
+                <!-- Date Selection -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-calendar-day"></i>
+                            اختيار التاريخ
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">اختر التاريخ *</label>
+                                <input type="date" id="dateSelect" class="form-control" onchange="loadDaySessions()">
+                            </div>
+                            
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <button class="btn btn-primary" onclick="loadDaySessions()" title="تحديث البيانات" style="height: 42px; padding: 0 1.5rem;">
+                                    <i class="fas fa-sync-alt"></i> تحديث
+                                </button>
+                            </div>
+                        </div>
+                        <div style="margin-top: 0.5rem; color: var(--gray); font-size: 0.9rem;">
+                            <i class="fas fa-info-circle"></i> يمكنك اختيار اليوم الحالي أو أي يوم سابق فقط
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sessions Table -->
+                <div class="card" id="sessionsTableCard" style="display: none;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-list-check"></i>
+                            حصص اليوم - <span id="selectedDateDisplay"></span>
+                        </h3>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="sessionsTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">#</th>
+                                    <th>الطالب</th>
+                                    <th>المحفظ</th>
+                                    <th>الوقت</th>
+                                    <th>الحالة</th>
+                                    <th style="width: 300px;">تسجيل الحضور</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sessionsTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 3rem;">
+                                        <i class="fas fa-calendar-day" style="font-size: 3rem; color: var(--gray); opacity: 0.3;"></i>
+                                        <p style="color: var(--gray); margin-top: 1rem;">اختر تاريخاً لعرض الحصص</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Custom Scripts -->
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js?v=2"></script>
+    <script src="../js/db-logger.js"></script>
+    <script src="../js/supabase-client.js?v=2"></script>
+    
+    <script src="../js/config.js?v=2"></script>
+    <script src="../js/api.js?v=2"></script>
+    <script src="../js/attendance.js?v=2"></script>
+    
+    <!-- Burger Menu for Mobile -->
+    <script src="../js/burger-menu.js"></script>
+    
+    <!-- Hide restricted menu items for non-admin users -->
+    <script src="../js/hide-restricted-menu.js"></script>
+    
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', initAttendancePage);
+    </script>
+</body>
+</html>
+
+

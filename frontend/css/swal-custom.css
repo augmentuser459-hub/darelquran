@@ -1,0 +1,39 @@
+/* Custom SweetAlert2 Styles for RTL */
+.swal-rtl {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Cairo', sans-serif;
+}
+
+.swal-rtl .swal2-input,
+.swal-rtl .swal2-textarea,
+.swal-rtl .swal2-select {
+    text-align: right;
+    direction: rtl;
+}
+
+.swal-rtl .swal2-input:focus,
+.swal-rtl .swal2-textarea:focus,
+.swal-rtl .swal2-select:focus {
+    outline: none;
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
+}
+
+.swal-rtl label {
+    text-align: right;
+    display: block;
+}
+
+/* Smooth transitions */
+.swal2-input,
+.swal2-textarea,
+.swal2-select {
+    transition: all 0.3s ease;
+}
+
+.swal2-input:hover,
+.swal2-textarea:hover,
+.swal2-select:hover {
+    border-color: #adb5bd;
+}

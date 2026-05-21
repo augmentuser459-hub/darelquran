@@ -1,0 +1,457 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دار القرآن - الجدول الأسبوعي</title>
+    
+    <!-- Cairo Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Amiri Font for Quranic Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <!-- Auth Guard - Must be first script -->
+    <style>
+        body { opacity: 0; transition: opacity 0.3s ease; }
+        body.loaded { opacity: 1; }
+    </style>
+    <script src="/js/auth-guard.js?v=1.0"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+    </script>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../412228336_122100687200156181_4125175610950997201_n.jpg" alt="دار القرآن" class="sidebar-logo">
+                <h2 class="sidebar-title">دار القرآن</h2>
+                <p class="sidebar-subtitle">نظام إدارة المحفظين والطلبة</p>
+            </div>
+            
+            <nav>
+                <ul class="sidebar-menu">
+                    <li class="menu-item">
+                        <a href="../index.html" class="menu-link">
+                            <i class="fas fa-home menu-icon"></i>
+                            <span>لوحة التحكم</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./students.html" class="menu-link">
+                            <i class="fas fa-user-graduate menu-icon"></i>
+                            <span>الطلبة</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./teachers.html" class="menu-link">
+                            <i class="fas fa-chalkboard-teacher menu-icon"></i>
+                            <span>المحفظين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./sessions.html" class="menu-link">
+                            <i class="fas fa-calendar-alt menu-icon"></i>
+                            <span>الحصص</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./scheduled-sessions.html" class="menu-link active">
+                            <i class="fas fa-clock menu-icon"></i>
+                            <span>الجدول الأسبوعي</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./makeup-sessions.html" class="menu-link">
+                            <i class="fas fa-redo menu-icon"></i>
+                            <span>الحصص التعويضية</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./attendance.html" class="menu-link">
+                            <i class="fas fa-user-check menu-icon"></i>
+                            <span>الحضور والغياب</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./invoices.html" class="menu-link">
+                            <i class="fas fa-file-invoice menu-icon"></i>
+                            <span>الفواتير</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./payments.html" class="menu-link">
+                            <i class="fas fa-money-bill-wave menu-icon"></i>
+                            <span>المدفوعات</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./treasury.html" class="menu-link">
+                            <i class="fas fa-vault menu-icon"></i>
+                            <span>الخزائن</span>
+                        </a>
+                    </li>
+                    <!-- <li class="menu-item">
+                        <a href="./expenses.html" class="menu-link">
+                            <i class="fas fa-receipt menu-icon"></i>
+                            <span>المصروفات</span>
+                        </a>
+                    </li> -->
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./teacher-salaries.html" class="menu-link">
+                            <i class="fas fa-wallet menu-icon"></i>
+                            <span>رواتب المحفظين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="./reports.html" class="menu-link">
+                            <i class="fas fa-chart-bar menu-icon"></i>
+                            <span>التقارير</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="./settings.html" class="menu-link">
+                            <i class="fas fa-cog menu-icon"></i>
+                            <span>الإعدادات</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Logout Button -->
+            <div style="padding: 1rem; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button onclick="logout()" class="btn" style="width: 100%; background: #dc3545; color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt" style="margin-left: 0.5rem;"></i>
+                    تسجيل الخروج
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">
+                    <i class="fas fa-clock"></i>
+                    الجدول الأسبوعي
+                </h1>
+                
+                <div class="header-verse">
+                    ﴿إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ﴾
+                </div>
+                
+                <div class="header-actions">
+                    <button class="btn btn-success" onclick="generateMonthlySchedule()" style="margin-left: 0.5rem;">
+                        <i class="fas fa-calendar-alt"></i>
+                        إنشاء جدول الشهر
+                    </button>
+                    <button class="btn btn-primary" onclick="showAddExtraSessionModal()">
+                        <i class="fas fa-plus-circle"></i>
+                        إضافة حصة إضافية
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content islamic-pattern">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <div class="stat-value" id="totalScheduledSessions">0</div>
+                        <div class="stat-label">إجمالي الحصص المجدولة</div>
+                    </div>
+                    
+                    <div class="stat-card gold">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-value" id="activeScheduledSessions">0</div>
+                        <div class="stat-label">الحصص النشطة</div>
+                    </div>
+                    
+                    <div class="stat-card brown">
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stat-value" id="inactiveScheduledSessions">0</div>
+                        <div class="stat-label">الحصص غير النشطة</div>
+                    </div>
+                    
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-value" id="totalStudentsInSchedule">0</div>
+                        <div class="stat-label">عدد الطلبة</div>
+                    </div>
+                </div>
+
+                <!-- Scheduled Sessions Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-list"></i>
+                            قائمة الحصص المجدولة
+                        </h3>
+                    </div>
+                    
+                    <!-- Search Box -->
+                    <div style="padding: 1rem; background: #f8f9fa; border-bottom: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; max-width: 500px;">
+                            <i class="fas fa-search" style="color: var(--primary-color);"></i>
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                placeholder="ابحث بالاسم (طالب أو محفظ)..." 
+                                class="form-control"
+                                style="flex: 1; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem;"
+                                onkeyup="filterScheduledSessions()"
+                            >
+                            <button 
+                                onclick="clearSearch()" 
+                                class="btn" 
+                                style="background: var(--gray); color: white; padding: 0.75rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer;"
+                                title="مسح البحث"
+                            >
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="scheduledSessionsTable">
+                            <thead>
+                                <tr>
+                                    <th>اليوم</th>
+                                    <th>الوقت</th>
+                                    <th>الطالب</th>
+                                    <th>المحفظ</th>
+                                    <th>المدة</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scheduledSessionsTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner"></div>
+                                        <p>جاري تحميل البيانات...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Extra Session Modal (One-time session) -->
+    <div id="extraSessionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; overflow-y: auto;">
+        <div style="max-width: 700px; margin: 2rem auto; background: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 1rem;">
+                <h2 style="color: var(--primary-color); margin: 0;">
+                    <i class="fas fa-plus-circle"></i>
+                    إضافة حصة إضافية (مرة واحدة)
+                </h2>
+                <button onclick="closeExtraSessionModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray); transition: color 0.3s;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border-right: 4px solid #ffc107;">
+                <p style="margin: 0; color: #856404;">
+                    <i class="fas fa-info-circle"></i>
+                    هذه الحصة ستكون لمرة واحدة فقط في التاريخ المحدد ولن تتكرر
+                </p>
+            </div>
+            
+            <form id="extraSessionForm">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                            <i class="fas fa-user-graduate"></i> الطالب *
+                        </label>
+                        <select id="extraStudent" class="form-control" required onchange="onExtraStudentChange()" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem;">
+                            <option value="">اختر الطالب</option>
+                        </select>
+                    </div>
+                    
+                    <div id="extraStudentInfo" style="display: none; background: #e3f2fd; padding: 1rem; border-radius: 0.5rem; border-right: 4px solid #2196f3;">
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong><i class="fas fa-chalkboard-teacher"></i> المحفظ:</strong>
+                            <span id="extraTeacherName">-</span>
+                        </div>
+                        <div>
+                            <strong><i class="fas fa-calendar-check"></i> الحصص الحالية:</strong>
+                            <span id="extraCurrentSessions">-</span>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="extraTeacher">
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                                <i class="fas fa-calendar"></i> التاريخ *
+                            </label>
+                            <input type="date" id="extraDate" class="form-control" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                                <i class="fas fa-clock"></i> الوقت *
+                            </label>
+                            <input type="time" id="extraTime" class="form-control" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                                <i class="fas fa-hourglass-half"></i> المدة (دقيقة)
+                            </label>
+                            <input type="number" id="extraDuration" class="form-control" value="60" min="15" max="180" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: flex-end;">
+                    <button type="button" onclick="closeExtraSessionModal()" class="btn" style="background: var(--gray); color: white; padding: 0.75rem 2rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
+                        <i class="fas fa-save"></i> حفظ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Generate Monthly Schedule Modal -->
+    <div id="monthlyScheduleModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+        <div style="max-width: 650px; width: 100%; max-height: 90vh; background: white; border-radius: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column;">
+            <!-- Header - Fixed -->
+            <div style="padding: 1.5rem; border-bottom: 2px solid var(--border-color); flex-shrink: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="color: var(--primary-color); margin: 0; font-size: 1.3rem;">
+                        <i class="fas fa-calendar-alt"></i>
+                        إنشاء جدول الشهر
+                    </h2>
+                    <button onclick="closeMonthlyScheduleModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray); transition: color 0.3s;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Content - Scrollable -->
+            <div style="padding: 1.5rem; overflow-y: auto; flex: 1;">
+                <div style="background: #e3f2fd; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border-right: 4px solid #2196f3;">
+                    <p style="margin: 0; color: #1976d2; font-size: 0.9rem;">
+                        <i class="fas fa-info-circle"></i>
+                        سيتم إنشاء جدول شهري كامل (4 أسابيع) بناءً على نظام التسعير الخاص بالطالب
+                    </p>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                        <i class="fas fa-user-graduate"></i> الطالب *
+                    </label>
+                    <select id="monthlyStudent" class="form-control" required onchange="onMonthlyStudentChange()" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem;">
+                        <option value="">اختر الطالب</option>
+                    </select>
+                </div>
+                
+                <div id="monthlyStudentInfo" style="display: none; background: #f8f9fa; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border: 2px solid var(--border-color);">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <strong style="font-size: 0.9rem;"><i class="fas fa-chalkboard-teacher"></i> المحفظ:</strong>
+                            <div id="monthlyTeacherName" style="color: var(--primary-color); font-weight: 600;">-</div>
+                        </div>
+                        <div>
+                            <strong style="font-size: 0.9rem;"><i class="fas fa-calendar-week"></i> عدد الحصص:</strong>
+                            <div id="monthlySessionsPerWeek" style="color: var(--success-color); font-weight: 600;">-</div>
+                        </div>
+                    </div>
+                    <div style="background: #fff3cd; padding: 0.75rem; border-radius: 0.5rem; border-right: 3px solid #ffc107;">
+                        <small style="color: #856404;">
+                            <i class="fas fa-calculator"></i>
+                            سيتم إنشاء <strong id="monthlyTotalSessions">0</strong> حصة (4 أسابيع)
+                        </small>
+                    </div>
+                </div>
+                
+                <input type="hidden" id="monthlyTeacher">
+                <input type="hidden" id="monthlySessionsCount">
+                
+                <div id="monthlySessionsContainer" style="margin-bottom: 1rem;">
+                    <!-- Sessions will be added here -->
+                </div>
+            </div>
+            
+            <!-- Footer - Fixed -->
+            <div style="padding: 1.5rem; border-top: 2px solid var(--border-color); flex-shrink: 0; background: #f8f9fa;">
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" onclick="closeMonthlyScheduleModal()" class="btn" style="background: var(--gray); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                    <button type="button" onclick="saveMonthlySchedule()" class="btn btn-success" style="padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
+                        <i class="fas fa-save"></i> إنشاء الجدول
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Custom Scripts -->
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/db-logger.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/scheduled-sessions.js"></script>
+    
+    <!-- Burger Menu for Mobile -->
+    <script src="../js/burger-menu.js"></script>
+    
+    <!-- Hide restricted menu items for non-admin users -->
+    <script src="../js/hide-restricted-menu.js"></script>
+    
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', initScheduledSessionsPage);
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,616 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دار القرآن - الفواتير</title>
+    
+    <!-- Cairo Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Amiri Font for Quranic Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/swal-custom.css">
+    
+    <!-- Auth Guard - Must be first script -->
+    <style>
+        body { opacity: 0; transition: opacity 0.3s ease; }
+        body.loaded { opacity: 1; }
+    </style>
+    <script src="/js/auth-guard.js?v=1.0"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+    </script>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="/412228336_122100687200156181_4125175610950997201_n.jpg" alt="دار القرآن" class="sidebar-logo">
+                <h2 class="sidebar-title">دار القرآن</h2>
+                <p class="sidebar-subtitle">نظام إدارة المحفظين والطلبة</p>
+            </div>
+            
+            <nav>
+                <ul class="sidebar-menu">
+                    <li class="menu-item">
+                        <a href="/" class="menu-link">
+                            <i class="fas fa-home menu-icon"></i>
+                            <span>لوحة التحكم</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/pages/students.html" class="menu-link">
+                            <i class="fas fa-user-graduate menu-icon"></i>
+                            <span>الطلبة</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/pages/teachers.html" class="menu-link">
+                            <i class="fas fa-chalkboard-teacher menu-icon"></i>
+                            <span>المحفظين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/pages/sessions.html" class="menu-link">
+                            <i class="fas fa-calendar-alt menu-icon"></i>
+                            <span>الحصص</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/pages/scheduled-sessions.html" class="menu-link">
+                            <i class="fas fa-clock menu-icon"></i>
+                            <span>الجدول الأسبوعي</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/pages/makeup-sessions.html" class="menu-link">
+                            <i class="fas fa-redo menu-icon"></i>
+                            <span>الحصص التعويضية</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/pages/attendance.html" class="menu-link">
+                            <i class="fas fa-user-check menu-icon"></i>
+                            <span>الحضور والغياب</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/pages/invoices.html" class="menu-link active">
+                            <i class="fas fa-file-invoice menu-icon"></i>
+                            <span>الفواتير</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/pages/payments.html" class="menu-link">
+                            <i class="fas fa-money-bill-wave menu-icon"></i>
+                            <span>المدفوعات</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="/pages/treasury.html" class="menu-link">
+                            <i class="fas fa-vault menu-icon"></i>
+                            <span>الخزائن</span>
+                        </a>
+                    </li>
+                    <!-- <li class="menu-item">
+                        <a href="/pages/expenses.html" class="menu-link">
+                            <i class="fas fa-receipt menu-icon"></i>
+                            <span>المصروفات</span>
+                        </a>
+                    </li> -->
+                    <li class="menu-item" data-restricted="true">
+                        <a href="/pages/teacher-salaries.html" class="menu-link">
+                            <i class="fas fa-wallet menu-icon"></i>
+                            <span>رواتب المحفظين</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" data-restricted="true">
+                        <a href="/pages/reports.html" class="menu-link">
+                            <i class="fas fa-chart-bar menu-icon"></i>
+                            <span>التقارير</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/pages/settings.html" class="menu-link">
+                            <i class="fas fa-cog menu-icon"></i>
+                            <span>الإعدادات</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Logout Button -->
+            <div style="padding: 1rem; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button onclick="logout()" class="btn" style="width: 100%; background: #dc3545; color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt" style="margin-left: 0.5rem;"></i>
+                    تسجيل الخروج
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">
+                    <i class="fas fa-file-invoice"></i>
+                    إدارة الفواتير
+                </h1>
+                
+                <div class="header-verse">
+                    ﴿إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ﴾
+                </div>
+                
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="generateMonthlyInvoices()" title="إنشاء فواتير شهرية لجميع الطلبة">
+                        <i class="fas fa-magic"></i>
+                        إنشاء فواتير شهرية
+                    </button>
+                    <button class="btn btn-primary" onclick="showAddInvoiceModal()">
+                        <i class="fas fa-plus"></i>
+                        إضافة فاتورة جديدة
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content islamic-pattern">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div class="stat-value" id="totalInvoices">0</div>
+                        <div class="stat-label">إجمالي الفواتير</div>
+                    </div>
+                    
+                    <div class="stat-card gold">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-value" id="paidInvoices">0</div>
+                        <div class="stat-label">الفواتير المدفوعة</div>
+                    </div>
+                    
+                    <div class="stat-card brown">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-value" id="pendingInvoices">0</div>
+                        <div class="stat-label">الفواتير المعلقة</div>
+                    </div>
+                    
+                    <div class="stat-card danger">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-value" id="overdueInvoices">0</div>
+                        <div class="stat-label">الفواتير المتأخرة</div>
+                    </div>
+                </div>
+
+                <!-- Invoices Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-list"></i>
+                            قائمة الفواتير
+                        </h3>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="invoicesTable">
+                            <thead>
+                                <tr>
+                                    <th>رقم الفاتورة</th>
+                                    <th>الطالب</th>
+                                    <th>الشهر</th>
+                                    <th>المبلغ الإجمالي</th>
+                                    <th>المبلغ المدفوع</th>
+                                    <th>المبلغ المتبقي</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoicesTableBody">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner"></div>
+                                        <p>جاري تحميل البيانات...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Invoice Modal -->
+    <div class="modal" id="addInvoiceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-file-invoice"></i>
+                    إضافة فاتورة جديدة
+                </h3>
+                <button class="close-modal" onclick="closeAddInvoiceModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="addInvoiceForm" onsubmit="saveInvoice(event)">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentSelect">
+                                <i class="fas fa-user-graduate"></i>
+                                الطالب *
+                            </label>
+                            <select id="studentSelect" class="form-control" required onchange="onStudentChange()">
+                                <option value="">اختر الطالب...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="monthSelect">
+                                <i class="fas fa-calendar"></i>
+                                الشهر *
+                            </label>
+                            <select id="monthSelect" class="form-control" required>
+                                <option value="">اختر الشهر...</option>
+                                <option value="1">يناير</option>
+                                <option value="2">فبراير</option>
+                                <option value="3">مارس</option>
+                                <option value="4">أبريل</option>
+                                <option value="5">مايو</option>
+                                <option value="6">يونيو</option>
+                                <option value="7">يوليو</option>
+                                <option value="8">أغسطس</option>
+                                <option value="9">سبتمبر</option>
+                                <option value="10">أكتوبر</option>
+                                <option value="11">نوفمبر</option>
+                                <option value="12">ديسمبر</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="yearInput">
+                                <i class="fas fa-calendar-alt"></i>
+                                السنة *
+                            </label>
+                            <input type="number" id="yearInput" class="form-control" required min="2020" max="2030">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="baseAmountInput">
+                                <i class="fas fa-dollar-sign"></i>
+                                المبلغ الأساسي *
+                            </label>
+                            <input type="number" id="baseAmountInput" class="form-control" required min="0" step="0.01" onchange="calculateTotal()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expectedSessionsInput">
+                                <i class="fas fa-calendar-check"></i>
+                                عدد الحصص المتوقعة *
+                            </label>
+                            <input type="number" id="expectedSessionsInput" class="form-control" required min="1" value="8">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="discountPercentageInput">
+                                <i class="fas fa-percent"></i>
+                                نسبة الخصم (%)
+                            </label>
+                            <input type="number" id="discountPercentageInput" class="form-control" min="0" max="100" step="0.01" value="0" onchange="calculateTotal()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="discountAmountInput">
+                                <i class="fas fa-tag"></i>
+                                مبلغ الخصم
+                            </label>
+                            <input type="number" id="discountAmountInput" class="form-control" min="0" step="0.01" value="0" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="additionalChargesInput">
+                                <i class="fas fa-plus-circle"></i>
+                                رسوم إضافية
+                            </label>
+                            <input type="number" id="additionalChargesInput" class="form-control" min="0" step="0.01" value="0" onchange="calculateTotal()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="totalAmountInput">
+                                <i class="fas fa-calculator"></i>
+                                المبلغ الإجمالي *
+                            </label>
+                            <input type="number" id="totalAmountInput" class="form-control" required min="0" step="0.01" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dueDateInput">
+                                <i class="fas fa-clock"></i>
+                                تاريخ الاستحقاق *
+                            </label>
+                            <input type="date" id="dueDateInput" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discountReasonInput">
+                            <i class="fas fa-comment"></i>
+                            سبب الخصم
+                        </label>
+                        <textarea id="discountReasonInput" class="form-control" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notesInput">
+                            <i class="fas fa-sticky-note"></i>
+                            ملاحظات
+                        </label>
+                        <textarea id="notesInput" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="invoice-summary">
+                        <h4>ملخص الفاتورة</h4>
+                        <div class="summary-row">
+                            <span>المبلغ الأساسي:</span>
+                            <span id="summaryBase">0.00 $</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>الخصم:</span>
+                            <span id="summaryDiscount" class="text-success">0.00 $</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>رسوم إضافية:</span>
+                            <span id="summaryCharges">0.00 $</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>الإجمالي:</span>
+                            <span id="summaryTotal">0.00 $</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddInvoiceModal()">
+                        <i class="fas fa-times"></i>
+                        إلغاء
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        حفظ الفاتورة
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Invoice Modal -->
+    <div class="modal" id="editInvoiceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-edit"></i>
+                    تعديل الفاتورة
+                </h3>
+                <button class="close-modal" onclick="closeEditInvoiceModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="editInvoiceForm" onsubmit="updateInvoice(event)">
+                <input type="hidden" id="editInvoiceId">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editDiscountPercentageInput">
+                                <i class="fas fa-percent"></i>
+                                نسبة الخصم (%)
+                            </label>
+                            <input type="number" id="editDiscountPercentageInput" class="form-control" min="0" max="100" step="0.01" onchange="calculateEditTotal()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editAdditionalChargesInput">
+                                <i class="fas fa-plus-circle"></i>
+                                رسوم إضافية
+                            </label>
+                            <input type="number" id="editAdditionalChargesInput" class="form-control" min="0" step="0.01" onchange="calculateEditTotal()">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editNotesInput">
+                            <i class="fas fa-sticky-note"></i>
+                            ملاحظات
+                        </label>
+                        <textarea id="editNotesInput" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditInvoiceModal()">
+                        <i class="fas fa-times"></i>
+                        إلغاء
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        حفظ التعديلات
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pay Invoice Modal -->
+    <div class="modal" id="payInvoiceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-dollar-sign"></i>
+                    تسجيل دفعة
+                </h3>
+                <button class="close-modal" onclick="closePayInvoiceModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="payInvoiceForm" onsubmit="submitPayment(event)">
+                <input type="hidden" id="payInvoiceId">
+                <input type="hidden" id="payStudentId">
+                <div class="modal-body">
+                    <div class="invoice-info">
+                        <h4>معلومات الفاتورة</h4>
+                        <div class="info-row">
+                            <span>رقم الفاتورة:</span>
+                            <span id="payInvoiceNumber"></span>
+                        </div>
+                        <div class="info-row">
+                            <span>الطالب:</span>
+                            <span id="payStudentName"></span>
+                        </div>
+                        <div class="info-row">
+                            <span>المبلغ الإجمالي:</span>
+                            <span id="payTotalAmount"></span>
+                        </div>
+                        <div class="info-row">
+                            <span>المبلغ المدفوع:</span>
+                            <span id="payPaidAmount"></span>
+                        </div>
+                        <div class="info-row total">
+                            <span>المبلغ المتبقي:</span>
+                            <span id="payDueAmount"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="paymentAmountInput">
+                                <i class="fas fa-money-bill-wave"></i>
+                                المبلغ المدفوع *
+                            </label>
+                            <input type="number" id="paymentAmountInput" class="form-control" required min="0.01" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="paymentMethodSelect">
+                                <i class="fas fa-credit-card"></i>
+                                طريقة الدفع *
+                            </label>
+                            <select id="paymentMethodSelect" class="form-control" required>
+                                <option value="">اختر طريقة الدفع...</option>
+                                <option value="cash">نقدي</option>
+                                <option value="bank_transfer">تحويل بنكي</option>
+                                <option value="credit_card">بطاقة ائتمان</option>
+                                <option value="online">دفع إلكتروني</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="paymentDateInput">
+                                <i class="fas fa-calendar"></i>
+                                تاريخ الدفع *
+                            </label>
+                            <input type="date" id="paymentDateInput" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="transactionReferenceInput">
+                                <i class="fas fa-hashtag"></i>
+                                رقم المعاملة
+                            </label>
+                            <input type="text" id="transactionReferenceInput" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="paymentNotesInput">
+                            <i class="fas fa-sticky-note"></i>
+                            ملاحظات
+                        </label>
+                        <textarea id="paymentNotesInput" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePayInvoiceModal()">
+                        <i class="fas fa-times"></i>
+                        إلغاء
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check"></i>
+                        تأكيد الدفع
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Custom Scripts -->
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js?v=2"></script>
+    <script src="../js/db-logger.js"></script>
+    <script src="../js/supabase-client.js?v=2"></script>
+    
+    <script src="../js/config.js?v=3"></script>
+    <script src="../js/api.js?v=3"></script>
+    <script src="../js/invoices.js?v=3"></script>
+    
+    <!-- Burger Menu for Mobile -->
+    <script src="../js/burger-menu.js"></script>
+    
+    <!-- Hide restricted menu items for non-admin users -->
+    <script src="../js/hide-restricted-menu.js"></script>
+    
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', initInvoicesPage);
+    </script>
+</body>
+</html>
+
+

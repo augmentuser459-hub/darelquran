@@ -1,0 +1,525 @@
+/**
+ * Dashboard Page - Main Logic
+ */
+
+// Global variables
+let attendanceChart = null;
+let revenueChart = null;
+
+/**
+ * Initialize Dashboard
+ */
+async function initDashboard() {
+    try {
+        // Load dashboard stats
+        await loadDashboardStats();
+        
+        // Load today's sessions
+        await loadTodaySessions();
+        
+        // Load recent payments
+        await loadRecentPayments();
+        
+        // Initialize charts
+        initCharts();
+        
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        showError('حدث خطأ في تحميل لوحة التحكم');
+    }
+}
+
+/**
+ * Load Dashboard Statistics
+ */
+async function loadDashboardStats() {
+    try {
+        const stats = await api.get(CONFIG.ACTIONS.dashboardStats);
+        
+        // Update stat cards with real data
+        document.getElementById('totalStudents').textContent = stats.students?.active || 0;
+        document.getElementById('totalTeachers').textContent = stats.teachers?.active || 0;
+        document.getElementById('todaySessions').textContent = stats.sessions_today?.total || 0;
+        
+        // Calculate monthly revenue from payments
+        const monthlyRevenue = stats.financial?.payments?.total_amount || 0;
+        document.getElementById('monthlyRevenue').textContent = formatCurrency(monthlyRevenue);
+        
+        console.log('Dashboard stats loaded:', stats);
+        
+    } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+        // Show default values on error
+        document.getElementById('totalStudents').textContent = '0';
+        document.getElementById('totalTeachers').textContent = '0';
+        document.getElementById('todaySessions').textContent = '0';
+        document.getElementById('monthlyRevenue').textContent = formatCurrency(0);
+    }
+}
+
+/**
+ * Load Today's Sessions
+ */
+async function loadTodaySessions() {
+    try {
+        const response = await api.get(CONFIG.ACTIONS.todaySessions);
+        const sessions = Array.isArray(response) ? response : (response.results || []);
+        const tbody = document.getElementById('todaySessionsBody');
+        
+        if (!sessions || sessions.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 2rem; color: var(--gray);">
+                        <i class="fas fa-calendar-times" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        لا توجد حصص اليوم
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = sessions.map(session => `
+            <tr>
+                <td>${formatTime(session.session_time)}</td>
+                <td>${session.student?.name || session.student_name || 'غير محدد'}</td>
+                <td>${session.teacher?.name || session.teacher_name || 'غير محدد'}</td>
+                <td>${getStatusBadge(session.status)}</td>
+            </tr>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Error loading today sessions:', error);
+        document.getElementById('todaySessionsBody').innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 2rem; color: var(--danger-color);">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    حدث خطأ في تحميل الحصص
+                </td>
+            </tr>
+        `;
+    }
+}
+
+/**
+ * Load Recent Payments
+ */
+async function loadRecentPayments() {
+    try {
+        const response = await api.get(CONFIG.ACTIONS.recentPayments);
+        const payments = Array.isArray(response) ? response : (response.results || []);
+        const tbody = document.getElementById('recentPaymentsBody');
+        
+        if (!payments || payments.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 2rem; color: var(--gray);">
+                        <i class="fas fa-money-bill-wave" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        لا توجد مدفوعات حديثة
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = payments.map(payment => `
+            <tr>
+                <td>${formatDate(payment.payment_date)}</td>
+                <td>${payment.student?.name || payment.student_name || 'غير محدد'}</td>
+                <td>${formatCurrency(payment.amount)}</td>
+                <td>${payment.payment_method || 'غير محدد'}</td>
+                <td><span class="badge badge-success">مكتمل</span></td>
+            </tr>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Error loading recent payments:', error);
+        document.getElementById('recentPaymentsBody').innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem; color: var(--danger-color);">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    حدث خطأ في تحميل المدفوعات
+                </td>
+            </tr>
+        `;
+    }
+}
+
+/**
+ * Load Notifications (Disabled temporarily)
+ */
+/*
+async function loadNotifications() {
+    try {
+        const response = await api.get(CONFIG.ENDPOINTS.notifications);
+        const notifications = Array.isArray(response) ? response : (response.results || []);
+        const unreadCount = notifications.filter(n => !n.is_read).length;
+        
+        const notificationCountEl = document.getElementById('notificationCount');
+        if (notificationCountEl) {
+            notificationCountEl.textContent = unreadCount;
+            
+            if (unreadCount === 0) {
+                notificationCountEl.style.display = 'none';
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+    }
+}
+*/
+
+/**
+ * Initialize Charts
+ */
+async function initCharts() {
+    console.log('=== Initializing Charts ===');
+    try {
+        // Get attendance statistics for current month
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        console.log('Date range:', formatDateForAPI(firstDayOfMonth), 'to', formatDateForAPI(today));
+        
+        const attendanceStats = await api.get(
+            `${CONFIG.ACTIONS.attendanceStatistics}?start_date=${formatDateForAPI(firstDayOfMonth)}&end_date=${formatDateForAPI(today)}`
+        );
+        
+        console.log('Attendance stats from API:', attendanceStats);
+        
+        // Prepare attendance data by week
+        const attendanceByWeek = await prepareAttendanceByWeek(firstDayOfMonth, today);
+        
+        console.log('Attendance by week:', attendanceByWeek);
+        
+        // Attendance Chart
+        const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+        attendanceChart = new Chart(attendanceCtx, {
+            type: 'line',
+            data: {
+                labels: attendanceByWeek.labels,
+                datasets: [{
+                    label: 'نسبة الحضور',
+                    data: attendanceByWeek.data,
+                    borderColor: '#1a5f3f',
+                    backgroundColor: 'rgba(26, 95, 63, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: 'Cairo',
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `نسبة الحضور: ${context.parsed.y.toFixed(1)}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            },
+                            font: {
+                                family: 'Cairo'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: 'Cairo'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Get financial data for current year starting from January
+        const monthlyFinancial = await getMonthlyFinancialData();
+        
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        revenueChart = new Chart(revenueCtx, {
+            type: 'bar',
+            data: {
+                labels: monthlyFinancial.labels,
+                datasets: [{
+                    label: 'الإيرادات',
+                    data: monthlyFinancial.revenue,
+                    backgroundColor: '#1a5f3f'
+                }, {
+                    label: 'المصروفات',
+                    data: monthlyFinancial.expenses,
+                    backgroundColor: '#d4af37'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: 'Cairo',
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            },
+                            font: {
+                                family: 'Cairo'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: 'Cairo'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error initializing charts:', error);
+    }
+}
+
+/**
+ * Prepare Attendance Data by Week
+ */
+async function prepareAttendanceByWeek(startDate, endDate) {
+    const labels = [];
+    const data = [];
+    
+    // Get all sessions in the date range with large page size to avoid pagination issues
+    const url = `${CONFIG.ENDPOINTS.sessions}?session_date__gte=${formatDateForAPI(startDate)}&session_date__lte=${formatDateForAPI(endDate)}&page_size=1000`;
+    const sessions = await api.get(url);
+    const sessionsList = Array.isArray(sessions) ? sessions : (sessions.results || []);
+    
+    console.log(`Total sessions in period: ${sessionsList.length}`);
+    console.log('Sessions data:', sessionsList);
+    
+    // Group by week (based on day of month)
+    const weekData = {};
+    sessionsList.forEach(session => {
+        const date = new Date(session.session_date);
+        const dayOfMonth = date.getDate();
+        
+        // Calculate week number: 1-7 = week 1, 8-14 = week 2, etc.
+        const weekNum = Math.floor((dayOfMonth - 1) / 7) + 1;
+        const weekKey = `الأسبوع ${weekNum}`;
+        
+        if (!weekData[weekKey]) {
+            weekData[weekKey] = { total: 0, attended: 0 };
+        }
+        weekData[weekKey].total++;
+        
+        // Check all possible "attended" statuses
+        const attendedStatuses = ['attended', 'completed', 'present'];
+        const isAttended = attendedStatuses.includes(session.status);
+        
+        if (isAttended) {
+            weekData[weekKey].attended++;
+        }
+        
+        console.log(`Session ${session.id}: date=${session.session_date}, day=${dayOfMonth}, week=${weekNum}, status="${session.status}", isAttended=${isAttended}`);
+    });
+    
+    console.log('Week data:', weekData);
+    
+    // Create data for each week
+    for (let week = 1; week <= 5; week++) {
+        const weekKey = `الأسبوع ${week}`;
+        labels.push(weekKey);
+        
+        if (weekData[weekKey] && weekData[weekKey].total > 0) {
+            const rate = (weekData[weekKey].attended / weekData[weekKey].total) * 100;
+            data.push(rate);
+            console.log(`${weekKey}: ${weekData[weekKey].attended}/${weekData[weekKey].total} = ${rate.toFixed(1)}%`);
+        } else {
+            data.push(0);
+            console.log(`${weekKey}: no data`);
+        }
+    }
+    
+    return { labels, data };
+}
+
+/**
+ * Get Monthly Financial Data
+ */
+async function getMonthlyFinancialData() {
+    const labels = [];
+    const revenue = [];
+    const expenses = [];
+    
+    const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    
+    // Get data from January to current month (or 6 months max)
+    const currentMonth = today.getMonth(); // 0 = January, 11 = December
+    const monthsToShow = Math.min(currentMonth + 1, 6); // Show from January to current month, max 6
+    
+    for (let i = 0; i < monthsToShow; i++) {
+        const month = i; // Start from January (0)
+        const year = currentYear;
+        
+        labels.push(monthNames[month]);
+        
+        // Get payments for this month
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        
+        try {
+            const payments = await api.get(
+                `${CONFIG.ENDPOINTS.payments}?payment_date__gte=${formatDateForAPI(firstDay)}&payment_date__lte=${formatDateForAPI(lastDay)}&status=completed&page_size=1000`
+            );
+            const paymentsList = Array.isArray(payments) ? payments : (payments.results || []);
+            const totalRevenue = paymentsList.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+            revenue.push(totalRevenue);
+        } catch (error) {
+            console.error(`Error loading payments for ${monthNames[month]}:`, error);
+            revenue.push(0);
+        }
+        
+        // Get expenses for this month
+        try {
+            const expensesData = await api.get(
+                `${CONFIG.ENDPOINTS.expenses}?expense_date__gte=${formatDateForAPI(firstDay)}&payment_date__lte=${formatDateForAPI(lastDay)}&status=approved&page_size=1000`
+            );
+            const expensesList = Array.isArray(expensesData) ? expensesData : (expensesData.results || []);
+            
+            // Get salaries for this month
+            const salaries = await api.get(
+                `${CONFIG.ENDPOINTS.teacherSalaries}?month=${month + 1}&year=${year}&status=paid&page_size=1000`
+            );
+            const salariesList = Array.isArray(salaries) ? salaries : (salaries.results || []);
+            
+            const totalExpenses = expensesList.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
+            const totalSalaries = salariesList.reduce((sum, s) => sum + parseFloat(s.total_amount || 0), 0);
+            
+            expenses.push(totalExpenses + totalSalaries);
+        } catch (error) {
+            console.error(`Error loading expenses for ${monthNames[month]}:`, error);
+            expenses.push(0);
+        }
+    }
+    
+    return { labels, revenue, expenses };
+}
+
+/**
+ * Format Date for API
+ */
+function formatDateForAPI(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+/**
+ * View Session Details
+ */
+function viewSession(sessionId) {
+    window.location.href = `pages/session-details.html?id=${sessionId}`;
+}
+
+/**
+ * Format Currency
+ */
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('ar-EG', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0
+    }).format(amount);
+}
+
+/**
+ * Format Date
+ */
+function formatDate(dateString) {
+    if (!dateString) return 'غير محدد';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-EG', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+/**
+ * Format Time
+ */
+function formatTime(timeString) {
+    if (!timeString) return 'غير محدد';
+    return timeString.substring(0, 5);
+}
+
+/**
+ * Get Status Badge
+ */
+function getStatusBadge(status) {
+    const statusMap = {
+        'scheduled': '<span class="badge badge-info">مجدولة</span>',
+        'attended': '<span class="badge badge-success">حضر</span>',
+        'completed': '<span class="badge badge-success">مكتملة</span>',
+        'absent': '<span class="badge badge-danger">غائب</span>',
+        'excused': '<span class="badge badge-warning">معتذر</span>',
+        'cancelled': '<span class="badge badge-danger">ملغية</span>',
+        'makeup': '<span class="badge badge-warning">تعويضية</span>'
+    };
+    
+    return statusMap[status] || '<span class="badge badge-info">غير محدد</span>';
+}
+
+/**
+ * Show Error Message
+ */
+function showError(message) {
+    alert(message);
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', initDashboard);

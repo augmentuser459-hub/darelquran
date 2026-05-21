@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عارض سجلات قاعدة البيانات</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card.success .number { color: #4CAF50; }
+        .stat-card.error .number { color: #f44336; }
+        .stat-card.total .number { color: #2196F3; }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .logs-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .log-entry:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(-5px);
+        }
+
+        .log-entry.request {
+            border-right: 4px solid #2196F3;
+        }
+
+        .log-entry.response.success {
+            border-right: 4px solid #4CAF50;
+        }
+
+        .log-entry.response.error {
+            border-right: 4px solid #f44336;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .log-title {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .log-time {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .log-details {
+            display: grid;
+            gap: 8px;
+        }
+
+        .log-detail {
+            display: flex;
+            gap: 10px;
+        }
+
+        .log-detail-label {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 100px;
+        }
+
+        .log-detail-value {
+            color: #333;
+            flex: 1;
+        }
+
+        .log-data {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-database"></i> عارض سجلات قاعدة البيانات</h1>
+            <p>مراقبة وتحليل جميع طلبات قاعدة البيانات</p>
+        </div>
+
+        <div class="stats" id="stats">
+            <div class="stat-card total">
+                <div class="number" id="totalLogs">0</div>
+                <div>إجمالي السجلات</div>
+            </div>
+            <div class="stat-card success">
+                <div class="number" id="successLogs">0</div>
+                <div>عمليات ناجحة</div>
+            </div>
+            <div class="stat-card error">
+                <div class="number" id="errorLogs">0</div>
+                <div>عمليات فاشلة</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="refreshLogs()">
+                <i class="fas fa-sync"></i> تحديث
+            </button>
+            <button class="btn btn-success" onclick="exportLogs()">
+                <i class="fas fa-download"></i> تصدير
+            </button>
+            <button class="btn btn-danger" onclick="clearLogs()">
+                <i class="fas fa-trash"></i> مسح الكل
+            </button>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>نوع العملية:</label>
+                <select id="operationFilter" onchange="applyFilters()">
+                    <option value="">الكل</option>
+                    <option value="select">SELECT</option>
+                    <option value="insert">INSERT</option>
+                    <option value="update">UPDATE</option>
+                    <option value="delete">DELETE</option>
+                    <option value="rpc">RPC</option>
+                </select>
+
+                <label>الجدول:</label>
+                <select id="tableFilter" onchange="applyFilters()">
+                    <option value="">الكل</option>
+                </select>
+
+                <label>الحالة:</label>
+                <select id="statusFilter" onchange="applyFilters()">
+                    <option value="">الكل</option>
+                    <option value="success">ناجح</option>
+                    <option value="error">فاشل</option>
+                </select>
+
+                <label>بحث:</label>
+                <input type="text" id="searchInput" placeholder="ابحث..." oninput="applyFilters()">
+            </div>
+        </div>
+
+        <div class="logs-container" id="logsContainer">
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>لا توجد سجلات</h3>
+                <p>ابدأ باستخدام النظام لرؤية السجلات هنا</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/db-logger.js"></script>
+    <script>
+        let allLogs = [];
+        let filteredLogs = [];
+
+        function loadLogs() {
+            if (window.dbLogger) {
+                allLogs = window.dbLogger.getAllLogs();
+                filteredLogs = [...allLogs];
+                updateStats();
+                updateTableFilter();
+                renderLogs();
+            }
+        }
+
+        function updateStats() {
+            const total = allLogs.length;
+            const success = allLogs.filter(log => log.type === 'RESPONSE' && log.success).length;
+            const errors = allLogs.filter(log => log.type === 'RESPONSE' && !log.success).length;
+
+            document.getElementById('totalLogs').textContent = total;
+            document.getElementById('successLogs').textContent = success;
+            document.getElementById('errorLogs').textContent = errors;
+        }
+
+        function updateTableFilter() {
+            const tables = [...new Set(allLogs.map(log => log.table).filter(Boolean))];
+            const select = document.getElementById('tableFilter');
+            
+            select.innerHTML = '<option value="">الكل</option>';
+            tables.forEach(table => {
+                const option = document.createElement('option');
+                option.value = table;
+                option.textContent = table;
+                select.appendChild(option);
+            });
+        }
+
+        function applyFilters() {
+            const operation = document.getElementById('operationFilter').value;
+            const table = document.getElementById('tableFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            filteredLogs = allLogs.filter(log => {
+                if (operation && log.operation !== operation) return false;
+                if (table && log.table !== table) return false;
+                if (status === 'success' && (!log.success || log.type !== 'RESPONSE')) return false;
+                if (status === 'error' && (log.success || log.type !== 'RESPONSE')) return false;
+                if (search && !JSON.stringify(log).toLowerCase().includes(search)) return false;
+                return true;
+            });
+
+            renderLogs();
+        }
+
+        function renderLogs() {
+            const container = document.getElementById('logsContainer');
+            
+            if (filteredLogs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>لا توجد سجلات</h3>
+                        <p>لا توجد سجلات تطابق الفلاتر المحددة</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredLogs.reverse().map(log => {
+                const isResponse = log.type === 'RESPONSE';
+                const isSuccess = isResponse && log.success;
+                const isError = isResponse && !log.success;
+
+                let className = 'log-entry ';
+                if (isResponse) {
+                    className += isSuccess ? 'response success' : 'response error';
+                } else {
+                    className += 'request';
+                }
+
+                return `
+                    <div class="${className}">
+                        <div class="log-header">
+                            <div class="log-title">
+                                ${isResponse ? (isSuccess ? '✅' : '❌') : '📤'} 
+                                ${log.operation?.toUpperCase() || 'UNKNOWN'} - ${log.table || 'N/A'}
+                            </div>
+                            <div class="log-time">${log.time}</div>
+                        </div>
+                        <div class="log-details">
+                            ${log.user ? `
+                                <div class="log-detail">
+                                    <span class="log-detail-label">المستخدم:</span>
+                                    <span class="log-detail-value">${log.user}</span>
+                                </div>
+                            ` : ''}
+                            ${log.duration ? `
+                                <div class="log-detail">
+                                    <span class="log-detail-label">المدة:</span>
+                                    <span class="log-detail-value">${log.duration}</span>
+                                </div>
+                            ` : ''}
+                            ${log.recordCount !== undefined ? `
+                                <div class="log-detail">
+                                    <span class="log-detail-label">عدد السجلات:</span>
+                                    <span class="log-detail-value">${log.recordCount}</span>
+                                </div>
+                            ` : ''}
+                            ${log.filters && Object.keys(log.filters).length > 0 ? `
+                                <div class="log-detail">
+                                    <span class="log-detail-label">الفلاتر:</span>
+                                    <span class="log-detail-value">${JSON.stringify(log.filters, null, 2)}</span>
+                                </div>
+                            ` : ''}
+                            ${log.data ? `
+                                <div class="log-data">
+                                    <strong>البيانات:</strong><br>
+                                    ${JSON.stringify(log.data, null, 2)}
+                                </div>
+                            ` : ''}
+                            ${log.error ? `
+                                <div class="log-data" style="background: #ffebee; color: #c62828;">
+                                    <strong>الخطأ:</strong><br>
+                                    ${JSON.stringify(log.error, null, 2)}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function refreshLogs() {
+            loadLogs();
+        }
+
+        function exportLogs() {
+            if (window.dbLogger) {
+                window.dbLogger.exportLogs();
+            }
+        }
+
+        function clearLogs() {
+            if (confirm('هل أنت متأكد من مسح جميع السجلات؟')) {
+                if (window.dbLogger) {
+                    window.dbLogger.clearLogs();
+                    loadLogs();
+                }
+            }
+        }
+
+        // Auto refresh every 2 seconds
+        setInterval(refreshLogs, 2000);
+
+        // Initial load
+        loadLogs();
+    </script>
+</body>
+</html>
